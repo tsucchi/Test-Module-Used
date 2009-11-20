@@ -2,6 +2,10 @@ package Test::Module::Used;
 use base qw(Exporter);
 use strict;
 use warnings;
+use File::Find;
+use File::Spec::Functions qw(catfile);
+use Module::Used qw(modules_used_in_files);
+use PPI::Document;
 
 our $VERSION = '0.0.1';
 use 5.008;
@@ -28,6 +32,7 @@ our $meta_file = 'META.yml'; # the metafile described module dependency.
 our $perl_version = '5.008'; # default expected perl version
 
 our @EXPORT = qw(used_ok);
+
 =head1 methods
 
 =cut
@@ -59,9 +64,37 @@ check used module is ok.
 
 
 sub used_ok { # まだ仮実装
-    Test::More::plan tests => 1;
-    my $tb = Test::More->builder;
-    return $tb->ok( 1, 'ok' );
+#     Test::More::plan tests => 1;
+#     my $tb = Test::More->builder;
+#     return $tb->ok( 1, 'ok' );
+}
+
+
+sub _target_files {
+    my @result;
+    find( sub {
+              push @result, catfile($File::Find::dir, $_) if ( $_ =~ /\.pm$/ );
+          },
+          @module_dir);
+    return @result;
+}
+
+sub _used_modules {
+    return modules_used_in_files( _target_files() );
+}
+
+sub _version_from_file {
+    my $version;
+    for my $file ( _target_files() ) {
+        my $doc = PPI::Document->new($file);
+        for my $item ( @{$doc->find('PPI::Statement::Include')} ) {
+            for my $token ( @{$item->{children}} ) {
+                next if ( !$token->isa('PPI::Token::Number::Float') );
+                $version = $token->content;
+            }
+        }
+    }
+    return $version;
 }
 
 1;

@@ -5,3 +5,4 @@ use Test::More;
 use Test::Module::Used module_dir => ['t/lib'];
 
 used_ok();
+ok(1); #dummy
