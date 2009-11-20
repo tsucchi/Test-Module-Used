@@ -14,3 +14,5 @@ t/001_use_ok.t
 t/002_default.t
 t/003_option.t
 t/004_used_ok.t
+t/005_used_module.t
+t/lib/SampleModule.pm

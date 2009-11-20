@@ -6,3 +6,4 @@ use Test::Module::Used module_dir => ['t/lib'];
 
 used_ok();
 ok(1); #dummy
+done_testing();
