@@ -1,6 +1,6 @@
 use inc::Module::Install;
 name           'Test-Module-Used';
-author         'Takuya Tsuchida takuya.tsuchida@gmail.com';
+author         'Takuya Tsuchida tsucchi@cpan.org';
 license        'perl';
 all_from       'lib/Test/Module/Used.pm';
 requires       'Module::Used';

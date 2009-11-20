@@ -6,6 +6,7 @@ use File::Find;
 use File::Spec::Functions qw(catfile);
 use Module::Used qw(modules_used_in_files);
 use PPI::Document;
+use Module::CoreList;
 
 our $VERSION = '0.0.1';
 use 5.008;
@@ -97,6 +98,16 @@ sub _version_from_file {
     return $version;
 }
 
+sub _remove_core {
+    my( $version, @modules ) = @_;
+    my @result;
+    for my $module ( @modules ) {
+        my $first_release = Module::CoreList->first_release($module);
+        push @result, $module if ( !defined $first_release || $first_release >= $version );
+    }
+    return @result;
+}
+
 1;
 __END__
 
@@ -110,7 +121,8 @@ L<Test::Dependencies> has almost same feature.
 
 =head1 REPOSITORY
 
-write source code repository
+L<http://github.com/tsucchi/Test-Module-Used>
+
 
 =head1 LICENSE
 
