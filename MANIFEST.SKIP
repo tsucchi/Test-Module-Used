@@ -1,0 +1,7 @@
+^Makefile$
+^MANIFEST.SKIP$
+^t/999_dependencies.t$
+^xt/
+.*~$
+.svn
+^.git
