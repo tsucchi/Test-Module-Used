@@ -2,13 +2,18 @@
 use strict;
 use warnings;
 use Test::More;
-use Test::Module::Used test_dir     => ['t', 'xt'],
-                       module_dir   => ['lib', 'libs'],
-                       meta_file    => 'Meta.yml',
-                       perl_version => '5.010';
+use Test::Module::Used;
 
-is_deeply(\@Test::Module::Used::test_dir, ['t', 'xt']);
-is_deeply(\@Test::Module::Used::module_dir, ['lib', 'libs']);
-is($Test::Module::Used::meta_file, 'Meta.yml');
-is($Test::Module::Used::perl_version, '5.010');
+my $used = Test::Module::Used->new(
+    test_dir     => ['t', 'xt'],
+    module_dir   => ['lib', 'libs'],
+    meta_file    => 'Meta.yml',
+    perl_version => '5.010',
+);
+
+is_deeply($used->_test_dir, ['t', 'xt']);
+is_deeply($used->_module_dir, ['lib', 'libs']);
+is($used->_meta_file, 'Meta.yml');
+is($used->_perl_version, '5.010');
+
 done_testing();
