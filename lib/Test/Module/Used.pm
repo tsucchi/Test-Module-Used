@@ -76,14 +76,33 @@ check used module is ok.
 
 sub ok { # まだ仮実装
     my $self = shift;
-    return;
-#     Test::More::plan tests => 1;
-#     my $tb = Test::More->builder;
-#     return $tb->ok( 1, 'ok' );
+    $self->build_requires_ok;
+    $self->requires_ok;
 }
 
+=head2 requires_ok
 
-sub _target_files {
+check META.yml and modules
+
+=cut
+
+sub requires_ok {
+    my $self = shift;
+    return;
+}
+
+=head2 build_requires_ok
+
+check META.yml and testcode
+
+=cut
+
+sub build_requires_ok {
+    my $self = shift;
+    return;
+}
+
+sub _module_files {
     my $self = shift;
     my @result;
     find( sub {
@@ -93,15 +112,30 @@ sub _target_files {
     return @result;
 }
 
+sub _test_files {
+    my $self = shift;
+    my @result;
+    find( sub {
+              push @result, catfile($File::Find::dir, $_) if ( $_ =~ /\.t$/ );
+          },
+          @{$self->_test_dir});
+    return @result;
+}
+
 sub _used_modules {
     my $self = shift;
-    return modules_used_in_files( $self->_target_files() );
+    return modules_used_in_files( $self->_module_files() );
+}
+
+sub _used_modules_in_test {
+    my $self = shift;
+    return modules_used_in_files( $self->_test_files() );
 }
 
 sub _version_from_file {
     my $self = shift;
     my $version;
-    for my $file ( $self->_target_files() ) {
+    for my $file ( $self->_module_files() ) {
         my $doc = PPI::Document->new($file);
         for my $item ( @{$doc->find('PPI::Statement::Include')} ) {
             for my $token ( @{$item->{children}} ) {
