@@ -15,4 +15,6 @@ t/002_default.t
 t/003_option.t
 t/004_used_ok.t
 t/005_used_module.t
+t/006_read_meta_yml.t
 t/lib/SampleModule.pm
+t/testdata/META.yml

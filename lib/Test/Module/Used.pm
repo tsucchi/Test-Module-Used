@@ -7,6 +7,7 @@ use File::Spec::Functions qw(catfile);
 use Module::Used qw(modules_used_in_files);
 use PPI::Document;
 use Module::CoreList;
+use YAML;
 
 use 5.008;
 our $VERSION = '0.0.1';
@@ -123,14 +124,23 @@ sub _remove_core {
 }
 
 sub _read_meta_yml {
+    my $self = shift;
+    my $yaml = YAML::LoadFile( $self->_meta_file );
+    $self->{build_requires} = $yaml->{build_requires};
+    delete $yaml->{requires}->{perl};
+    $self->{requires} = $yaml->{requires};
 }
 
-sub _build_required {
-    return ('ExtUtils::MakeMaker', 'Test::More');
+sub _build_requires {
+    my $self = shift;
+    $self->_read_meta_yml if !defined $self->{build_requires};
+    return sort keys %{$self->{build_requires}};
 }
 
-sub _required {
-    return ('Module::Used', 'PPI::Document');
+sub _requires {
+    my $self = shift;
+    $self->_read_meta_yml if !defined $self->{requires};
+    return sort keys %{$self->{requires}}
 }
 
 1;
