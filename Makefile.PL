@@ -6,5 +6,6 @@ all_from       'lib/Test/Module/Used.pm';
 requires       'Module::Used';
 requires       'PPI::Document';
 requires       'YAML';
+requires       'List::MoreUtils';
 test_requires  'Test::More'  => '0.88';   #done_testing 使いたい
 WriteAll;

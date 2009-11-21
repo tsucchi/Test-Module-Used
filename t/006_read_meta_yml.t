@@ -22,6 +22,6 @@ is_deeply( [$used2->_build_requires()],
            ['ExtUtils::MakeMaker', 'Test::Class', 'Test::More' ] );
 
 is_deeply( [$used2->_requires()],
-           ['Module::Used'] );#perl 5.8.0 isn't return
+           ['Module::Used', 'Test::Module::Used'] );#perl 5.8.0 isn't return
 
 done_testing();

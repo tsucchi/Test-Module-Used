@@ -8,6 +8,8 @@ use Module::Used qw(modules_used_in_files);
 use PPI::Document;
 use Module::CoreList;
 use YAML;
+use Test::Builder;
+use List::MoreUtils qw(any);
 
 use 5.008;
 our $VERSION = '0.0.1';
@@ -46,6 +48,7 @@ sub new {
         module_dir   => $opt{module_dir}   || ['lib'],
         meta_file    => $opt{meta_file}    || 'META.yml',
         perl_version => $opt{perl_version} || '5.008',
+        exclude_in_testdir => $opt{exclude_in_testdir} || [],
     };
     bless $self, $class;
 }
@@ -74,32 +77,75 @@ check used module is ok.
 
 =cut
 
-sub ok { # まだ仮実装
+sub ok {
     my $self = shift;
-    $self->build_requires_ok;
-    $self->requires_ok;
+    my $test = Test::Builder->new();
+    my $version = $self->_version_from_file || $self->_perl_version;
+
+    my @used_in_lib     = _remove_core($version, $self->_used_modules);
+    my @requires_in_lib = _remove_core($version, $self->_requires);
+
+    my @used_in_test = _remove_core($version,
+                                    $self->_used_modules_in_test(@{$self->{exclude_in_testdir}})) ;
+    my @requires_in_test = _remove_core($version, $self->_build_requires);
+
+    $test->plan(tests => @used_in_lib + @requires_in_lib + @used_in_test + @requires_in_test);
+    my $status_requires_ok = $self->_requires_ok($test,
+                                                 $version,
+                                                 \@used_in_lib,
+                                                 \@requires_in_lib);
+    my $status_build_requires_ok = $self->_requires_ok($test,
+                                                       $version,
+                                                       \@used_in_test,
+                                                       \@requires_in_test);
+    return $status_requires_ok && $status_build_requires_ok;
 }
 
-=head2 requires_ok
-
-check META.yml and modules
-
-=cut
-
-sub requires_ok {
+sub _requires_ok {
     my $self = shift;
-    return;
+    my ($test, $version, $used_aref, $requires_aref) = @_;
+
+    my $status1 = $self->_check_required_but_not_used($test, $requires_aref, $used_aref);
+    my $status2 = $self->_check_used_but_not_required($test, $requires_aref, $used_aref);
+
+    return $status1 && $status2;
 }
 
-=head2 build_requires_ok
 
-check META.yml and testcode
-
-=cut
-
-sub build_requires_ok {
+sub _check_required_but_not_used {
     my $self = shift;
-    return;
+    my ($test, $requires_aref, $used_aref) = @_;
+    my @requires = @{$requires_aref};
+    my @used     = @{$used_aref};
+
+    my $result = 1;
+    for my $require ( @requires ) {
+        my $status = any { $_ eq $require } @used;
+        $test->ok( $status, "check required module: $require" );
+        if ( !$status ) {
+            $test->diag("module $require is required but not used");
+            $result = 0;
+        }
+    }
+    return $result;
+}
+
+sub _check_used_but_not_required {
+    my $self = shift;
+    my ($test, $requires_aref, $used_aref) = @_;
+    my @requires = @{$requires_aref};
+    my @used     = @{$used_aref};
+
+    my $result = 1;
+    for my $used ( @used ) {
+        my $status = any { $_ eq $used } @requires;
+        $test->ok( $status, "check used module: $used" );
+        if ( !$status ) {
+            $test->diag("module $used is used but not required");
+            $result = 0;
+        }
+    }
+    return $result;
 }
 
 sub _module_files {
@@ -129,7 +175,13 @@ sub _used_modules {
 
 sub _used_modules_in_test {
     my $self = shift;
-    return modules_used_in_files( $self->_test_files() );
+    my ( @excludes ) = @_;
+    # this code is slow. optimize later
+    my @result = modules_used_in_files( $self->_test_files() );
+    for my $exclude ( @excludes ) {
+        @result = grep { $_ ne $exclude } @result;
+    }
+    return @result;
 }
 
 sub _version_from_file {
