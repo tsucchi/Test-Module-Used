@@ -20,7 +20,15 @@ Test::Module::Used - Test dependency between module and META.yml
 
 =head1 SYNOPSIS
 
-write synopsis here
+  #!/usr/bin/perl -w
+  use strict;
+  use warnings;
+  use Test::Module::Used;
+  my $used = Test::Module::Used->new(
+    exclude_in_testdir => ['Test::Module::Used', 'My::Module'],
+  );
+  $used->ok;
+
 
 =head1 DESCRIPTION
 
@@ -28,7 +36,6 @@ Test dependency between module and META.yml
 
 =cut
 
-our @EXPORT = qw(used_ok);
 
 =head1 methods
 
@@ -37,6 +44,27 @@ our @EXPORT = qw(used_ok);
 =head2 new
 
 create new instance
+
+all parameters are specified by hash-style, and optional.
+
+in ordinary use.
+
+  my $used = Test::Module::Used->new(
+    exclude_in_testdir => ['Test::Module::Used', 'My::Module'],
+  );
+
+use I<exclude_in_testdir>. If this parameter is specified. Test::Module::Used ignore modules used in testdir.
+
+all parameter is as follows.(specified values are default)
+
+  my $used = Test::Module::Used->new(
+    test_dir     => ['t'],       # directory(ies) which contains test scripts.
+    module_dir   => ['lib'],     # directory(ies) which contains modules.
+    meta_file    => 'META.yml',  # META.yml (contains module requirement information)
+    perl_version => '5.008',     # expected perl version
+    exclude_in_testdir => [],    # ignored module(s) for test even if it is used.
+    exclude_in_moduledir => [],  # ignored module(s) for your module(lib) even if it is used.
+  );
 
 =cut
 
@@ -49,6 +77,7 @@ sub new {
         meta_file    => $opt{meta_file}    || 'META.yml',
         perl_version => $opt{perl_version} || '5.008',
         exclude_in_testdir => $opt{exclude_in_testdir} || [],
+        exclude_in_moduledir => $opt{exclude_in_moduledir} || [],
     };
     bless $self, $class;
 }
@@ -73,7 +102,14 @@ sub _perl_version {
 =head2 ok
 
 check used module is ok.
-...
+
+  my $used = Test::Module::Used->new(
+    exclude_in_testdir => ['Test::Module::Used', 'My::Module'],
+  );
+  $used->ok;
+
+
+First, This module reads I<META.yml> and get I<build_requires> and I<requires>. Next, reads module directory (by default I<lib>) and test directory(by default I<t>), and compare required module is really used and used module is really required. If all these requirement information is OK, test will success.
 
 =cut
 
@@ -87,7 +123,8 @@ sub ok {
 
     my @used_in_test = _remove_core($version,
                                     $self->_used_modules_in_test(@{$self->{exclude_in_testdir}})) ;
-    my @requires_in_test = _remove_core($version, $self->_build_requires);
+    my @requires_in_test = _remove_core($version,
+                                        $self->_build_requires(@{$self->{exclude_in_moduledir}}));
 
     $test->plan(tests => @used_in_lib + @requires_in_lib + @used_in_test + @requires_in_test);
     my $status_requires_ok = $self->_requires_ok($test,
@@ -170,18 +207,27 @@ sub _test_files {
 
 sub _used_modules {
     my $self = shift;
-    return modules_used_in_files( $self->_module_files() );
+    my ( @excludes ) = @_;
+    my @result = modules_used_in_files( $self->_module_files() );
+    return _array_difference(\@result, \@excludes);
 }
 
 sub _used_modules_in_test {
     my $self = shift;
     my ( @excludes ) = @_;
-    # this code is slow. optimize later
     my @result = modules_used_in_files( $self->_test_files() );
-    for my $exclude ( @excludes ) {
-        @result = grep { $_ ne $exclude } @result;
+    return _array_difference(\@result, \@excludes);
+}
+
+sub _array_difference {
+    my ( $aref1, $aref2 ) = @_;
+    my @a1 = @{$aref1};
+    my @a2 = @{$aref2};
+
+    for my $a2 ( @a2 ) {
+        @a1 = grep { $_ ne $a2 } @a1;
     }
-    return @result;
+    return @a1;
 }
 
 sub _version_from_file {
