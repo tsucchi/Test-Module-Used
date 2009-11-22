@@ -12,7 +12,7 @@ use Test::Builder;
 use List::MoreUtils qw(any);
 
 use 5.008;
-our $VERSION = '0.0.1';
+our $VERSION = '0.0.2';
 
 =head1 NAME
 

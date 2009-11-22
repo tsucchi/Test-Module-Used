@@ -9,4 +9,6 @@ requires       'YAML';
 requires       'List::MoreUtils';
 requires       'Module::CoreList';
 test_requires  'Test::More';
+
+no_index       directory => 'testdata';
 WriteAll;
