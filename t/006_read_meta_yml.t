@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 use warnings;
-use Test::More;
+use Test::More tests=>4;
 use Test::Module::Used;
 
 my $used = Test::Module::Used->new(
@@ -24,4 +24,4 @@ is_deeply( [$used2->_build_requires()],
 is_deeply( [$used2->_requires()],
            ['Module::Used', 'Test::Module::Used'] );#perl 5.8.0 isn't return
 
-done_testing();
+

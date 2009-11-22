@@ -8,5 +8,5 @@ requires       'PPI::Document';
 requires       'YAML';
 requires       'List::MoreUtils';
 requires       'Module::CoreList';
-test_requires  'Test::More'  => '0.88';   #done_testing 使いたい
+test_requires  'Test::More';
 WriteAll;

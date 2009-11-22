@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 use warnings;
-use Test::More;
+use Test::More tests=>6;
 
 use Test::Module::Used;
 
@@ -17,6 +17,6 @@ is($used->_version_from_file(), '5.00803'); # perl version specified in testdata
 
 is_deeply( [Test::Module::Used::_remove_core('5.00803', qw(Net::FTP Module::Used Test::Module::Used))],
            ['Module::Used', 'Test::Module::Used'] );
-done_testing();
+
 
 
