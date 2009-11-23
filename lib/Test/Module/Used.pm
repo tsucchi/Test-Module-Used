@@ -12,7 +12,7 @@ use Test::Builder;
 use List::MoreUtils qw(any);
 
 use 5.008;
-our $VERSION = '0.0.2';
+our $VERSION = '0.0.3';
 
 =head1 NAME
 
@@ -45,7 +45,7 @@ Test dependency between module and META.yml
 
 create new instance
 
-all parameters are specified by hash-style, and optional.
+all parameters are passed by hash-style, and optional.
 
 in ordinary use.
 
@@ -280,7 +280,7 @@ __END__
 
 =head1 AUTHOR
 
-Takuya Tsuchida E<lt>tsucchi@cpan.org<gt>
+Takuya Tsuchida E<lt>tsucchi@cpan.orgE<gt>
 
 =head1 SEE ALSO
 

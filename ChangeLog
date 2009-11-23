@@ -1,0 +1,16 @@
+2009-11-24  Takuya Tsuchida  <tsucchi@cpan.org>
+
+	* 0.0.3
+	add ChangeLog and README
+
+2009-11-23  Takuya Tsuchida  <tsucchi@cpan.org>
+
+	* 0.0.2
+	fix insufficient index(set no_index to testdata)
+
+	
+2009-11-22  Takuya Tsuchida  <tsucchi@cpan.org>
+
+	* 0.0.1
+	initial release
+
