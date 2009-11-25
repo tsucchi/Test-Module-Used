@@ -32,7 +32,9 @@ Test::Module::Used - Test dependency between module and META.yml
 
 =head1 DESCRIPTION
 
-Test dependency between module and META.yml
+Test dependency between module and META.yml.
+
+This module reads I<META.yml> and get I<build_requires> and I<requires>. It compares required module is really used and used module is really required.
 
 =cut
 
@@ -61,10 +63,12 @@ all parameter is as follows.(specified values are default)
     test_dir     => ['t'],       # directory(ies) which contains test scripts.
     module_dir   => ['lib'],     # directory(ies) which contains modules.
     meta_file    => 'META.yml',  # META.yml (contains module requirement information)
-    perl_version => '5.008',     # expected perl version
+    perl_version => '5.008',     # expected perl version which is used for ignore core-modules in testing
     exclude_in_testdir => [],    # ignored module(s) for test even if it is used.
     exclude_in_moduledir => [],  # ignored module(s) for your module(lib) even if it is used.
   );
+
+if your module source contains I<use 5.XXX> statement, I<perl_version> passed in constructor is ignored (prior to use version in module source code).
 
 =cut
 
@@ -266,13 +270,15 @@ sub _read_meta_yml {
 sub _build_requires {
     my $self = shift;
     $self->_read_meta_yml if !defined $self->{build_requires};
-    return sort keys %{$self->{build_requires}};
+    my @result = sort keys %{$self->{build_requires}};
+    return @result;
 }
 
 sub _requires {
     my $self = shift;
     $self->_read_meta_yml if !defined $self->{requires};
-    return sort keys %{$self->{requires}}
+    my @result = sort keys %{$self->{requires}};
+    return @result;
 }
 
 1;
