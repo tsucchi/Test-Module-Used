@@ -5,11 +5,11 @@ use warnings;
 use File::Find;
 use File::Spec::Functions qw(catfile);
 use Module::Used qw(modules_used_in_files);
-use PPI::Document;
 use Module::CoreList;
 use YAML;
 use Test::Builder;
 use List::MoreUtils qw(any);
+use Perl::MinimumVersion;
 
 use 5.008;
 our $VERSION = '0.0.3';
@@ -244,17 +244,14 @@ sub _array_difference {
 
 sub _version_from_file {
     my $self = shift;
-    my $version;
+
+    my $highest_version;
     for my $file ( $self->_module_files() ) {
-        my $doc = PPI::Document->new($file);
-        for my $item ( @{$doc->find('PPI::Statement::Include')} ) {
-            for my $token ( @{$item->{children}} ) {
-                next if ( !$token->isa('PPI::Token::Number::Float') );
-                $version = $token->content;
-            }
-        }
+        my $minimum_version = Perl::MinimumVersion->new($file);
+        my $version = $minimum_version->minimum_explicit_version;
+        $highest_version = $version if ( !defined $highest_version || $version > $highest_version );
     }
-    return $version;
+    return $highest_version;
 }
 
 sub _remove_core {

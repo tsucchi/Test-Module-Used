@@ -4,6 +4,7 @@
 	add ChangeLog and README
 	describe about perl_version
 	bug fix (failed when test is empty)
+	parse perlversion using Perl::MinimumVersion
 
 2009-11-23  Takuya Tsuchida  <tsucchi@cpan.org>
 

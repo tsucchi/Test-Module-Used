@@ -4,7 +4,7 @@ author         'Takuya Tsuchida tsucchi@cpan.org';
 license        'perl';
 all_from       'lib/Test/Module/Used.pm';
 requires       'Module::Used';
-requires       'PPI::Document';
+requires       'Perl::MinimumVersion';
 requires       'YAML';
 requires       'List::MoreUtils';
 requires       'Module::CoreList';
