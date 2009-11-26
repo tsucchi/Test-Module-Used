@@ -3,6 +3,7 @@
 	* 0.0.3
 	add ChangeLog and README
 	describe about perl_version
+	bug fix (failed when test is empty)
 
 2009-11-23  Takuya Tsuchida  <tsucchi@cpan.org>
 

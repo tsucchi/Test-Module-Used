@@ -130,16 +130,24 @@ sub ok {
     my @requires_in_test = _remove_core($version,
                                         $self->_build_requires(@{$self->{exclude_in_moduledir}}));
 
-    $test->plan(tests => @used_in_lib + @requires_in_lib + @used_in_test + @requires_in_test);
-    my $status_requires_ok = $self->_requires_ok($test,
-                                                 $version,
-                                                 \@used_in_lib,
-                                                 \@requires_in_lib);
-    my $status_build_requires_ok = $self->_requires_ok($test,
-                                                       $version,
-                                                       \@used_in_test,
-                                                       \@requires_in_test);
-    return $status_requires_ok && $status_build_requires_ok;
+    my $num_tests = @used_in_lib + @requires_in_lib + @used_in_test + @requires_in_test;
+    if ( $num_tests > 0 ) {
+        $test->plan(tests => $num_tests);
+        my $status_requires_ok = $self->_requires_ok($test,
+                                                     $version,
+                                                     \@used_in_lib,
+                                                     \@requires_in_lib);
+        my $status_build_requires_ok = $self->_requires_ok($test,
+                                                           $version,
+                                                           \@used_in_test,
+                                                           \@requires_in_test);
+        return $status_requires_ok && $status_build_requires_ok;
+    }
+    else {
+        $test->plan(tests => 1);
+        $test->ok(1, "no tests run");
+        return 1;
+    }
 }
 
 sub _requires_ok {

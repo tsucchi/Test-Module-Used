@@ -19,7 +19,11 @@ t/004_used_ok.t
 t/005_used_module.t
 t/006_read_meta_yml.t
 t/007_test_myself.t
+t/008_test_is_empty.t
 testdata/lib/SampleModule.pm
+testdata/lib2/My/Test.pm
 testdata/META.yml
 testdata/META.yml2
+testdata/META.yml3
 testdata/t/001_test.t
+testdata/t2/001_use_ok.t
