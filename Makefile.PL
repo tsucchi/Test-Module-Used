@@ -10,5 +10,7 @@ requires       'List::MoreUtils';
 requires       'Module::CoreList';
 test_requires  'Test::More';
 
+author_tests   'xt';
+
 no_index       directory => 'testdata';
 WriteAll;
