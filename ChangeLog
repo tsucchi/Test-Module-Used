@@ -1,3 +1,10 @@
+2009-11-27  Takuya Tsuchida  <tsucchi@cpan.org>
+
+	* 0.0.4
+	found bug in ok(module_requires exclude)
+	add build_requires and requires exclusion in constructor
+	
+
 2009-11-24  Takuya Tsuchida  <tsucchi@cpan.org>
 
 	* 0.0.3

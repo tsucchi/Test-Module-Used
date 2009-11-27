@@ -60,12 +60,14 @@ use I<exclude_in_testdir>. If this parameter is specified. Test::Module::Used ig
 all parameter is as follows.(specified values are default)
 
   my $used = Test::Module::Used->new(
-    test_dir     => ['t'],       # directory(ies) which contains test scripts.
-    module_dir   => ['lib'],     # directory(ies) which contains modules.
-    meta_file    => 'META.yml',  # META.yml (contains module requirement information)
-    perl_version => '5.008',     # expected perl version which is used for ignore core-modules in testing
-    exclude_in_testdir => [],    # ignored module(s) for test even if it is used.
-    exclude_in_moduledir => [],  # ignored module(s) for your module(lib) even if it is used.
+    test_dir     => ['t'],            # directory(ies) which contains test scripts.
+    module_dir   => ['lib'],          # directory(ies) which contains modules.
+    meta_file    => 'META.yml',       # META.yml (contains module requirement information)
+    perl_version => '5.008',          # expected perl version which is used for ignore core-modules in testing
+    exclude_in_testdir => [],         # ignored module(s) for test even if it is used.
+    exclude_in_moduledir => [],       # ignored module(s) for your module(lib) even if it is used.
+    exclude_in_build_requires => [],  # ignored module(s) even if it is written in build_requires of META.yml.
+    exclude_in_requires => [],        # ignored module(s) even if it is written in requires of META.yml.
   );
 
 if your module source contains I<use 5.XXX> statement, I<perl_version> passed in constructor is ignored (prior to use version in module source code).
@@ -82,6 +84,8 @@ sub new {
         perl_version => $opt{perl_version} || '5.008',
         exclude_in_testdir => $opt{exclude_in_testdir} || [],
         exclude_in_moduledir => $opt{exclude_in_moduledir} || [],
+        exclude_in_build_requires => $opt{exclude_in_build_requires} || [],
+        exclude_in_requires => $opt{exclude_in_requires} || [],
     };
     bless $self, $class;
 }
@@ -122,13 +126,14 @@ sub ok {
     my $test = Test::Builder->new();
     my $version = $self->_version_from_file || $self->_perl_version;
 
-    my @used_in_lib     = _remove_core($version, $self->_used_modules);
+    my @used_in_lib     = _remove_core($version,
+                                       $self->_used_modules);
     my @requires_in_lib = _remove_core($version, $self->_requires);
 
     my @used_in_test = _remove_core($version,
-                                    $self->_used_modules_in_test(@{$self->{exclude_in_testdir}})) ;
+                                    $self->_used_modules_in_test);
     my @requires_in_test = _remove_core($version,
-                                        $self->_build_requires(@{$self->{exclude_in_moduledir}}));
+                                        $self->_build_requires);
 
     my $num_tests = @used_in_lib + @requires_in_lib + @used_in_test + @requires_in_test;
     if ( $num_tests > 0 ) {
@@ -219,14 +224,14 @@ sub _test_files {
 
 sub _used_modules {
     my $self = shift;
-    my ( @excludes ) = @_;
+    my @excludes = @{$self->{exclude_in_moduledir}};
     my @result = modules_used_in_files( $self->_module_files() );
     return _array_difference(\@result, \@excludes);
 }
 
 sub _used_modules_in_test {
     my $self = shift;
-    my ( @excludes ) = @_;
+    my @excludes = @{$self->{exclude_in_testdir}};
     my @result = modules_used_in_files( $self->_test_files() );
     return _array_difference(\@result, \@excludes);
 }
@@ -274,16 +279,20 @@ sub _read_meta_yml {
 
 sub _build_requires {
     my $self = shift;
+    my @excludes = @{$self->{exclude_in_build_requires}};
+
     $self->_read_meta_yml if !defined $self->{build_requires};
     my @result = sort keys %{$self->{build_requires}};
-    return @result;
+    return _array_difference(\@result, \@excludes);
 }
 
 sub _requires {
     my $self = shift;
+    my @excludes = @{$self->{exclude_in_requires}};
+
     $self->_read_meta_yml if !defined $self->{requires};
     my @result = sort keys %{$self->{requires}};
-    return @result;
+    return _array_difference(\@result, \@excludes);
 }
 
 1;
