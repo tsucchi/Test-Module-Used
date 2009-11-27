@@ -16,7 +16,7 @@ our $VERSION = '0.0.4';
 
 =head1 NAME
 
-Test::Module::Used - Test dependency between module and META.yml
+Test::Module::Used - Test required module is really used and vice versa bitween lib/t and META.yml
 
 =head1 SYNOPSIS
 
