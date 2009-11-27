@@ -139,11 +139,9 @@ sub ok {
     if ( $num_tests > 0 ) {
         $test->plan(tests => $num_tests);
         my $status_requires_ok = $self->_requires_ok($test,
-                                                     $version,
                                                      \@used_in_lib,
                                                      \@requires_in_lib);
         my $status_build_requires_ok = $self->_requires_ok($test,
-                                                           $version,
                                                            \@used_in_test,
                                                            \@requires_in_test);
         return $status_requires_ok && $status_build_requires_ok;
@@ -157,7 +155,7 @@ sub ok {
 
 sub _requires_ok {
     my $self = shift;
-    my ($test, $version, $used_aref, $requires_aref) = @_;
+    my ($test, $used_aref, $requires_aref) = @_;
 
     my $status1 = $self->_check_required_but_not_used($test, $requires_aref, $used_aref);
     my $status2 = $self->_check_used_but_not_required($test, $requires_aref, $used_aref);
