@@ -12,7 +12,7 @@ use List::MoreUtils qw(any);
 use Perl::MinimumVersion;
 
 use 5.008;
-our $VERSION = '0.0.4';
+our $VERSION = '0.0.5';
 
 =head1 NAME
 

@@ -1,3 +1,8 @@
+2009-11-28  Takuya Tsuchida  <tsucchi@cpan.org>
+
+	* 0.0.5
+	fix: test faild in windows environment
+
 2009-11-27  Takuya Tsuchida  <tsucchi@cpan.org>
 
 	* 0.0.4
