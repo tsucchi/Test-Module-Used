@@ -12,7 +12,7 @@ use List::MoreUtils qw(any);
 use Perl::MinimumVersion;
 
 use 5.008;
-our $VERSION = '0.0.5';
+our $VERSION = '0.0.6';
 
 =head1 NAME
 
@@ -57,7 +57,7 @@ in ordinary use.
 
 use I<exclude_in_testdir>. If this parameter is specified. Test::Module::Used ignore modules used in testdir.
 
-all parameter is as follows.(specified values are default)
+all parameters are as follows.(specified values are default)
 
   my $used = Test::Module::Used->new(
     test_dir     => ['t'],            # directory(ies) which contains test scripts.
@@ -82,10 +82,10 @@ sub new {
         module_dir   => $opt{module_dir}   || ['lib'],
         meta_file    => $opt{meta_file}    || 'META.yml',
         perl_version => $opt{perl_version} || '5.008',
-        exclude_in_testdir => $opt{exclude_in_testdir} || [],
-        exclude_in_moduledir => $opt{exclude_in_moduledir} || [],
+        exclude_in_testdir        => $opt{exclude_in_testdir}        || [],
+        exclude_in_moduledir      => $opt{exclude_in_moduledir}      || [],
         exclude_in_build_requires => $opt{exclude_in_build_requires} || [],
-        exclude_in_requires => $opt{exclude_in_requires} || [],
+        exclude_in_requires       => $opt{exclude_in_requires}       || [],
     };
     bless $self, $class;
 }
@@ -124,26 +124,17 @@ First, This module reads I<META.yml> and get I<build_requires> and I<requires>. 
 sub ok {
     my $self = shift;
     my $test = Test::Builder->new();
-    my $version = $self->_version_from_file || $self->_perl_version;
+    my $version = $self->_version;
 
-    my @used_in_lib     = _remove_core($version,
-                                       $self->_used_modules);
-    my @requires_in_lib = _remove_core($version, $self->_requires);
-
-    my @used_in_test = _remove_core($version,
-                                    $self->_used_modules_in_test);
-    my @requires_in_test = _remove_core($version,
-                                        $self->_build_requires);
-
-    my $num_tests = @used_in_lib + @requires_in_lib + @used_in_test + @requires_in_test;
+    my $num_tests = $self->_num_tests();
     if ( $num_tests > 0 ) {
         $test->plan(tests => $num_tests);
         my $status_requires_ok = $self->_requires_ok($test,
-                                                     \@used_in_lib,
-                                                     \@requires_in_lib);
+                                                     [$self->_remove_core($self->_used_modules)],
+                                                     [$self->_remove_core($self->_requires)]);
         my $status_build_requires_ok = $self->_requires_ok($test,
-                                                           \@used_in_test,
-                                                           \@requires_in_test);
+                                                           [$self->_remove_core($self->_used_modules_in_test)],
+                                                           [$self->_remove_core($self->_build_requires)]);
         return $status_requires_ok && $status_build_requires_ok;
     }
     else {
@@ -151,6 +142,23 @@ sub ok {
         $test->ok(1, "no tests run");
         return 1;
     }
+}
+
+sub _version {
+    my $self = shift;
+    if ( !defined $self->{version} ) {
+        $self->{version} = $self->_version_from_file || $self->_perl_version;
+    }
+    return $self->{version};
+}
+
+sub _num_tests {
+    my $self = shift;
+
+    return $self->_remove_core($self->_used_modules) +
+           $self->_remove_core($self->_requires) +
+           $self->_remove_core($self->_used_modules_in_test) +
+           $self->_remove_core($self->_build_requires);
 }
 
 sub _requires_ok {
@@ -258,11 +266,12 @@ sub _version_from_file {
 }
 
 sub _remove_core {
-    my( $version, @modules ) = @_;
+    my $self = shift;
+    my( @modules ) = @_;
     my @result;
     for my $module ( @modules ) {
         my $first_release = Module::CoreList->first_release($module);
-        push @result, $module if ( !defined $first_release || $first_release >= $version );
+        push @result, $module if ( !defined $first_release || $first_release >= $self->_version );
     }
     return @result;
 }
