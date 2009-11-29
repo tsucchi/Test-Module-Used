@@ -9,6 +9,7 @@ use Module::CoreList;
 use YAML;
 use Test::Builder;
 use List::MoreUtils qw(any);
+use List::Util qw(max);
 use Perl::MinimumVersion;
 
 use 5.008;
@@ -209,12 +210,15 @@ sub _check_used_but_not_required {
 
 sub _module_files {
     my $self = shift;
-    my @result;
-    find( sub {
-              push @result, catfile($File::Find::dir, $_) if ( $_ =~ /\.pm$/ );
-          },
-          @{$self->_module_dir});
-    return @result;
+    if ( !defined $self->{module_files} ) {
+        my @files;
+        find( sub {
+                  push @files, catfile($File::Find::dir, $_) if ( $_ =~ /\.pm$/ );
+              },
+              @{$self->_module_dir});
+        $self->{module_files} = \@files;
+    }
+    return @{$self->{module_files}};
 }
 
 sub _test_files {
@@ -261,24 +265,25 @@ sub _array_difference {
 sub _version_from_file {
     my $self = shift;
 
-    my $highest_version;
-    for my $file ( $self->_module_files() ) {
-        my $minimum_version = Perl::MinimumVersion->new($file);
-        my $version = $minimum_version->minimum_explicit_version;
-        $highest_version = $version if ( !defined $highest_version || $version > $highest_version );
-    }
-    return $highest_version;
+    my $version = max map {
+        my $minimum_version = Perl::MinimumVersion->new($_);
+        $minimum_version->minimum_explicit_version;
+    } $self->_module_files();
+    return $version;
 }
 
 sub _remove_core {
     my $self = shift;
-    my( @modules ) = @_;
-    my @result;
-    for my $module ( @modules ) {
-        my $first_release = Module::CoreList->first_release($module);
-        push @result, $module if ( !defined $first_release || $first_release >= $self->_version );
-    }
+    my( @module_names ) = @_;
+    my @result = grep {  !$self->_is_core_module($_) } @module_names;
     return @result;
+}
+
+sub _is_core_module {
+    my $self = shift;
+    my($module_name) = @_;
+    my $first_release = Module::CoreList->first_release($module_name);
+    return defined $first_release && $first_release <= $self->_version;
 }
 
 sub _read_meta_yml {
