@@ -124,14 +124,13 @@ First, This module reads I<META.yml> and get I<build_requires> and I<requires>. 
 sub ok {
     my $self = shift;
     my $test = Test::Builder->new();
-    my $version = $self->_version;
 
     my $num_tests = $self->_num_tests();
     if ( $num_tests > 0 ) {
         $test->plan(tests => $num_tests);
-        my $status_requires_ok = $self->_requires_ok($test,
-                                                     [$self->_remove_core($self->_used_modules)],
-                                                     [$self->_remove_core($self->_requires)]);
+        my $status_requires_ok       = $self->_requires_ok($test,
+                                                           [$self->_remove_core($self->_used_modules)],
+                                                           [$self->_remove_core($self->_requires)]);
         my $status_build_requires_ok = $self->_requires_ok($test,
                                                            [$self->_remove_core($self->_used_modules_in_test)],
                                                            [$self->_remove_core($self->_build_requires)]);
@@ -230,16 +229,22 @@ sub _test_files {
 
 sub _used_modules {
     my $self = shift;
-    my @excludes = @{$self->{exclude_in_moduledir}};
-    my @result = modules_used_in_files( $self->_module_files() );
-    return _array_difference(\@result, \@excludes);
+    if ( !defined $self->{used_modules} ) {
+        my @used = modules_used_in_files( $self->_module_files() );
+        my @result = _array_difference(\@used, $self->{exclude_in_moduledir});
+        $self->{used_modules} = \@result;
+    }
+    return @{$self->{used_modules}};
 }
 
 sub _used_modules_in_test {
     my $self = shift;
-    my @excludes = @{$self->{exclude_in_testdir}};
-    my @result = modules_used_in_files( $self->_test_files() );
-    return _array_difference(\@result, \@excludes);
+    if ( !defined $self->{used_modules_in_test} ) {
+        my @used = modules_used_in_files( $self->_test_files() );
+        my @result = _array_difference(\@used, $self->{exclude_in_testdir});
+        $self->{used_modules_in_test} = \@result;
+    }
+    return @{$self->{used_modules_in_test}};
 }
 
 sub _array_difference {
@@ -286,20 +291,18 @@ sub _read_meta_yml {
 
 sub _build_requires {
     my $self = shift;
-    my @excludes = @{$self->{exclude_in_build_requires}};
 
     $self->_read_meta_yml if !defined $self->{build_requires};
     my @result = sort keys %{$self->{build_requires}};
-    return _array_difference(\@result, \@excludes);
+    return _array_difference(\@result, $self->{exclude_in_build_requires});
 }
 
 sub _requires {
     my $self = shift;
-    my @excludes = @{$self->{exclude_in_requires}};
 
     $self->_read_meta_yml if !defined $self->{requires};
     my @result = sort keys %{$self->{requires}};
-    return _array_difference(\@result, \@excludes);
+    return _array_difference(\@result, $self->{exclude_in_requires});
 }
 
 1;
