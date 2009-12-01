@@ -13,7 +13,7 @@ use List::Util qw(max);
 use Perl::MinimumVersion;
 
 use 5.008;
-our $VERSION = '0.0.6';
+our $VERSION = '0.0.7';
 
 =head1 NAME
 
@@ -267,7 +267,7 @@ sub _version_from_file {
 
     my $version = max map {
         my $minimum_version = Perl::MinimumVersion->new($_);
-        $minimum_version->minimum_explicit_version;
+        $minimum_version->minimum_explicit_version || 0;
     } $self->_module_files();
     return $version;
 }

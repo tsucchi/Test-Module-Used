@@ -1,3 +1,8 @@
+2009-12-01  Takuya Tsuchida  <tsucchi@cpan.org>
+
+	* 0.0.7
+	fix: bugs in version fetching from file.
+
 2009-11-29  Takuya Tsuchida  <tsucchi@cpan.org>
 
 	* 0.0.6
