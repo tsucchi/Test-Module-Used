@@ -21,6 +21,8 @@ t/005_used_module.t
 t/006_read_meta_yml.t
 t/007_test_myself.t
 t/008_test_is_empty.t
+t/009_auto_get_exclude.t
+t/010_test_myself2.t
 testdata/lib/SampleModule.pm
 testdata/lib2/My/Test.pm
 testdata/META.yml

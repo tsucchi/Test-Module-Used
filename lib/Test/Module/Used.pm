@@ -4,16 +4,17 @@ use strict;
 use warnings;
 use File::Find;
 use File::Spec::Functions qw(catfile);
-use Module::Used qw(modules_used_in_files);
+use Module::Used qw(modules_used_in_document);
 use Module::CoreList;
 use YAML;
 use Test::Builder;
 use List::MoreUtils qw(any);
 use List::Util qw(max);
 use Perl::MinimumVersion;
+use PPI::Document;
 
 use 5.008;
-our $VERSION = '0.0.7';
+our $VERSION = '0.0.8_01';
 
 =head1 NAME
 
@@ -25,9 +26,7 @@ Test::Module::Used - Test required module is really used and vice versa bitween 
   use strict;
   use warnings;
   use Test::Module::Used;
-  my $used = Test::Module::Used->new(
-    exclude_in_testdir => ['Test::Module::Used', 'My::Module'],
-  );
+  my $used = Test::Module::Used->new();
   $used->ok;
 
 
@@ -52,13 +51,10 @@ all parameters are passed by hash-style, and optional.
 
 in ordinary use.
 
-  my $used = Test::Module::Used->new(
-    exclude_in_testdir => ['Test::Module::Used', 'My::Module'],
-  );
+  my $used = Test::Module::Used->new();
+  $used->ok();
 
-use I<exclude_in_testdir>. If this parameter is specified. Test::Module::Used ignore modules used in testdir.
-
-all parameters are as follows.(specified values are default)
+all parameters are as follows.(specified values are default, except I<exclude_in_testdir>)
 
   my $used = Test::Module::Used->new(
     test_dir     => ['t'],            # directory(ies) which contains test scripts.
@@ -72,6 +68,9 @@ all parameters are as follows.(specified values are default)
   );
 
 if your module source contains I<use 5.XXX> statement, I<perl_version> passed in constructor is ignored (prior to use version in module source code).
+
+I<exclude_in_testdir> is automatically set by default. This module reads I<module_dir> and parse "pacakge" statement, then found "package" statements and myself(Test::Module::Used) is set.
+I<exclude_in_moduledir> is also automatically set by default. This module reads I<module_dir> and parse "package" statement, found "package" statement are set.(Test::Module::Used isnt included)
 
 =cut
 
@@ -89,6 +88,8 @@ sub new {
         exclude_in_requires       => $opt{exclude_in_requires}       || [],
     };
     bless $self, $class;
+    $self->_get_packages(%opt);
+    return $self;
 }
 
 
@@ -125,6 +126,7 @@ First, This module reads I<META.yml> and get I<build_requires> and I<requires>. 
 sub ok {
     my $self = shift;
     my $test = Test::Builder->new();
+
 
     my $num_tests = $self->_num_tests();
     if ( $num_tests > 0 ) {
@@ -234,7 +236,7 @@ sub _test_files {
 sub _used_modules {
     my $self = shift;
     if ( !defined $self->{used_modules} ) {
-        my @used = modules_used_in_files( $self->_module_files() );
+        my @used = map { modules_used_in_document($self->_ppi_for($_)) } $self->_module_files;
         my @result = _array_difference(\@used, $self->{exclude_in_moduledir});
         $self->{used_modules} = \@result;
     }
@@ -244,7 +246,7 @@ sub _used_modules {
 sub _used_modules_in_test {
     my $self = shift;
     if ( !defined $self->{used_modules_in_test} ) {
-        my @used = modules_used_in_files( $self->_test_files() );
+        my @used = map { modules_used_in_document($self->_ppi_for($_)) } $self->_test_files;
         my @result = _array_difference(\@used, $self->{exclude_in_testdir});
         $self->{used_modules_in_test} = \@result;
     }
@@ -266,7 +268,9 @@ sub _version_from_file {
     my $self = shift;
 
     my $version = max map {
-        my $minimum_version = Perl::MinimumVersion->new($_);
+        my $minimum_version = Perl::MinimumVersion->new(
+            $self->_ppi_for($_)
+        );
         $minimum_version->minimum_explicit_version || 0;
     } $self->_module_files();
     return $version;
@@ -309,6 +313,46 @@ sub _requires {
     my @result = sort keys %{$self->{requires}};
     return _array_difference(\@result, $self->{exclude_in_requires});
 }
+
+# find package statements in lib
+sub _get_packages {
+    my $self = shift;
+    my ( %arg ) = @_;
+    my @packages = $self->_packages_from_file;
+    my @exclude_in_testdir = @packages;
+    unshift @exclude_in_testdir, __PACKAGE__;
+    $self->{exclude_in_testdir} = \@exclude_in_testdir if ( !exists $arg{exclude_in_testdir} );
+    $self->{exclude_in_moduledir} = \@packages         if ( !exists $arg{exclude_in_moduledir} );
+    return @packages;
+}
+
+sub _packages_from_file {
+    my $self = shift;
+    my @result;
+    for my $file ( $self->_module_files ) {
+        my $doc = $self->_ppi_for($file);
+        for my $item ( @{$doc->find('PPI::Statement::Package')} ) {
+            for my $token ( @{$item->{children}} ) {
+                next if ( !$token->isa('PPI::Token::Word') );
+                next if ( $token->content eq 'package' );
+                push @result, $token->content;
+            }
+        }
+    }
+    return @result;
+}
+
+# PPI::Document object for $filename
+sub _ppi_for {
+    my $self = shift;
+    my ($filename) = @_;
+    if ( !defined $self->{ppi_for}->{$filename} ) {
+        my $doc = PPI::Document->new($filename);
+        $self->{ppi_for}->{$filename} = $doc;
+    }
+    return $self->{ppi_for}->{$filename};
+}
+
 
 1;
 __END__

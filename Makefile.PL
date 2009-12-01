@@ -8,6 +8,7 @@ requires       'Perl::MinimumVersion';
 requires       'YAML';
 requires       'List::MoreUtils';
 requires       'Module::CoreList';
+requires       'PPI::Document';
 test_requires  'Test::More';
 
 author_tests   'xt';
