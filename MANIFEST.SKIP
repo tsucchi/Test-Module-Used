@@ -5,3 +5,4 @@
 .*~$
 .svn
 ^.git
+^.shipit$
