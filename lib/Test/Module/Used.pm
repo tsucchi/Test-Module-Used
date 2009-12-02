@@ -14,7 +14,7 @@ use Perl::MinimumVersion;
 use PPI::Document;
 
 use 5.008;
-our $VERSION = '0.0.8_01';
+our $VERSION = '0.0.8';
 
 =head1 NAME
 
@@ -144,6 +144,44 @@ sub ok {
         $test->ok(1, "no tests run");
         return 1;
     }
+}
+
+=head2 push_exclude_in_moduledir( @exclude_module_names )
+
+add ignored module(s) for your module(lib) even if it is used after new()'ed.
+this is usable if you want to use auto set feature for I<exclude_in_moduledir> but manually specify exclude modules.
+
+For example,
+
+ my $used = Test::Module::Used->new(); #automatically set exclude_in_moduledir
+ $used->push_exclude_in_moduledir( qw(Some::Module::Which::You::Want::To::Exclude) );#module(s) which you want to exclude
+ $used->ok(); #do test
+
+=cut
+
+sub push_exclude_in_moduledir {
+    my $self = shift;
+    my @exclude_module_names = @_;
+    push @{$self->{exclude_in_moduledir}},@exclude_module_names;
+}
+
+=head2 push_exclude_in_testdir( @exclude_module_names )
+
+add ignored module(s) for test even if it is used after new()'ed.
+this is usable if you want to use auto set feature for I<exclude_in_testdir> but manually specify exclude modules.
+
+For example,
+
+ my $used = Test::Module::Used->new(); #automatically set exclude_in_testdir
+ $used->push_exclude_in_testdir( qw(Some::Module::Which::You::Want::To::Exclude) );#module(s) which you want to exclude
+ $used->ok(); #do test
+
+=cut
+
+sub push_exclude_in_testdir {
+    my $self = shift;
+    my @exclude_module_names = @_;
+    push @{$self->{exclude_in_testdir}},@exclude_module_names;
 }
 
 sub _version {
