@@ -14,7 +14,7 @@ use Perl::MinimumVersion;
 use PPI::Document;
 
 use 5.008;
-our $VERSION = '0.0.8';
+our $VERSION = '0.0.9';
 
 =head1 NAME
 

@@ -13,7 +13,7 @@ my $used = Test::Module::Used->new(
 );
 
 is_deeply($used->_test_dir, ['t', 'xt']);
-is_deeply($used->_module_dir, ['lib', catfile('testdata/lib')]);
+is_deeply($used->_module_dir, ['lib', catfile('testdata', 'lib')]);
 is($used->_meta_file, 'Meta.yml');
 is($used->_perl_version, '5.010');
 
