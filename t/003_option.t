@@ -7,7 +7,7 @@ use File::Spec::Functions qw(catfile);
 
 my $used = Test::Module::Used->new(
     test_dir     => ['t', 'xt'],
-    module_dir   => ['lib', 'testdata/lib'],
+    module_dir   => ['lib', catfile('testdata', 'lib')],
     meta_file    => 'Meta.yml',
     perl_version => '5.010',
 );
