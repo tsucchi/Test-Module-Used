@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::Module::Used;
-use File::Spec::Funcitons qw(catfile);
+use File::Spec::Functions qw(catfile);
 
 my $used = Test::Module::Used->new(
     module_dir => [catfile('testdata', 'lib')],

@@ -1,3 +1,9 @@
+2009-12-07  Takuya Tsuchida  <tsucchi@cpan.org>
+
+	* 0.1.0
+	fix: fix again test failed in windows environment
+	remove all slash directory separator, and instead of using catfile().
+
 2009-12-04  Takuya Tsuchida  <tsucchi@cpan.org>
 
 	* 0.0.9
