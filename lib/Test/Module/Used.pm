@@ -14,7 +14,7 @@ use Perl::MinimumVersion;
 use PPI::Document;
 
 use 5.008;
-our $VERSION = '0.1.0';
+our $VERSION = '0.1.1';
 
 =head1 NAME
 
@@ -369,7 +369,9 @@ sub _packages_from_file {
     my @result;
     for my $file ( $self->_module_files ) {
         my $doc = $self->_ppi_for($file);
-        for my $item ( @{$doc->find('PPI::Statement::Package')} ) {
+        my $packages = $doc->find('PPI::Statement::Package');
+        next if ( $packages eq '' );
+        for my $item ( @{$packages} ) {
             for my $token ( @{$item->{children}} ) {
                 next if ( !$token->isa('PPI::Token::Word') );
                 next if ( $token->content eq 'package' );

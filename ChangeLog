@@ -1,5 +1,10 @@
 2009-12-07  Takuya Tsuchida  <tsucchi@cpan.org>
 
+	* 0.1.1
+	fix: failed if package statement doesn't exist in *.pm file.
+
+2009-12-07  Takuya Tsuchida  <tsucchi@cpan.org>
+
 	* 0.1.0
 	fix: fix again test failed in windows environment
 	remove all slash directory separator, and instead of using catfile().
