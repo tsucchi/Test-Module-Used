@@ -59,6 +59,7 @@ all parameters are as follows.(specified values are default, except I<exclude_in
   my $used = Test::Module::Used->new(
     test_dir     => ['t'],            # directory(ies) which contains test scripts.
     lib_dir      => ['lib'],          # directory(ies) which contains module libs.
+    test_lib_dir => ['t'],            # directory(ies) which contains libs used ONLY in test (ex. MockObject for test)
     meta_file    => 'META.yml',       # META.yml (contains module requirement information)
     perl_version => '5.008',          # expected perl version which is used for ignore core-modules in testing
     exclude_in_testdir => [],         # ignored module(s) for test even if it is used.
@@ -86,6 +87,7 @@ sub new {
     my $self = {
         test_dir     => $opt{test_dir}     || ['t'],
         lib_dir      => $opt{lib_dir}      || $opt{module_dir} || ['lib'],
+        test_lib_dir => $opt{test_lib_dir} || ['t'],
         meta_file    => $opt{meta_file}    || 'META.yml',
         perl_version => $opt{perl_version} || '5.008',
         exclude_in_testdir        => $opt{exclude_in_testdir},
@@ -105,6 +107,10 @@ sub _test_dir {
 
 sub _lib_dir {
     return shift->{lib_dir};
+}
+
+sub _test_lib_dir {
+    return shift->{test_lib_dir};
 }
 
 sub _meta_file {
@@ -276,6 +282,15 @@ sub _pm_files {
     return @{$self->{pm_files}};
 }
 
+sub _pm_files_in_test {
+    my $self = shift;
+    if ( !defined $self->{pm_files_in_test} ) {
+        my @files = $self->_find_files_by_ext($self->_test_lib_dir, qr/\.pm$/);
+        $self->{pm_files_in_test} = \@files;
+    }
+    return @{$self->{pm_files_in_test}};
+}
+
 sub _test_files {
     my $self = shift;
     return $self->_find_files_by_ext($self->_test_dir, qr/\.t$/);
@@ -377,11 +392,9 @@ sub _requires {
 sub _get_packages {
     my $self = shift;
     my @packages = $self->_packages_in( $self->_pm_files );
-    my @exclude_in_testdir = @packages;
-    unshift @exclude_in_testdir, __PACKAGE__;
-    $self->{exclude_in_testdir} = \@exclude_in_testdir if ( !defined $self->{exclude_in_testdir} );
-    $self->{exclude_in_libdir}  = \@packages           if ( !defined $self->{exclude_in_libdir} );
-    return @packages;
+    my @exclude_in_testdir = (__PACKAGE__, @packages, $self->_packages_in($self->_pm_files_in_test));
+    $self->push_exclude_in_testdir(@exclude_in_testdir) if ( !defined $self->{exclude_in_testdir} );
+    $self->push_exclude_in_libdir(@packages)            if ( !defined $self->{exclude_in_libdir} );
 }
 
 sub _packages_in {
