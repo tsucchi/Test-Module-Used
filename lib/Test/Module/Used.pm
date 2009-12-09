@@ -267,17 +267,17 @@ sub _check_used_but_not_required {
     return $result;
 }
 
-sub _module_files {
+sub _pm_files {
     my $self = shift;
-    if ( !defined $self->{module_files} ) {
+    if ( !defined $self->{pm_files} ) {
         my @files;
         find( sub {
                   push @files, catfile($File::Find::dir, $_) if ( $_ =~ /\.pm$/ );
               },
               @{$self->_lib_dir});
-        $self->{module_files} = \@files;
+        $self->{pm_files} = \@files;
     }
-    return @{$self->{module_files}};
+    return @{$self->{pm_files}};
 }
 
 sub _test_files {
@@ -293,7 +293,7 @@ sub _test_files {
 sub _used_modules {
     my $self = shift;
     if ( !defined $self->{used_modules} ) {
-        my @used = map { modules_used_in_document($self->_ppi_for($_)) } $self->_module_files;
+        my @used = map { modules_used_in_document($self->_ppi_for($_)) } $self->_pm_files;
         my @result = _array_difference(\@used, $self->{exclude_in_libdir});
         $self->{used_modules} = \@result;
     }
@@ -329,7 +329,7 @@ sub _version_from_file {
             $self->_ppi_for($_)
         );
         $minimum_version->minimum_explicit_version || 0;
-    } $self->_module_files();
+    } $self->_pm_files();
     return $version;
 }
 
@@ -386,7 +386,7 @@ sub _get_packages {
 sub _packages_from_file {
     my $self = shift;
     my @result;
-    for my $file ( $self->_module_files ) {
+    for my $file ( $self->_pm_files ) {
         my $doc = $self->_ppi_for($file);
         my $packages = $doc->find('PPI::Statement::Package');
         next if ( $packages eq '' );

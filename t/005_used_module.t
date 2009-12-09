@@ -10,7 +10,7 @@ my $used = Test::Module::Used->new(
     test_dir   => [catfile('testdata', 't')],
     perl_version => '5.008',# version specified but this is ignored because 'use 5.00803' is written in .pm file
 );
-is_deeply([$used->_module_files], [catfile('testdata', 'lib', 'SampleModule.pm')]);
+is_deeply([$used->_pm_files], [catfile('testdata', 'lib', 'SampleModule.pm')]);
 is_deeply([$used->_test_files],   [catfile('testdata', 't', '001_test.t')]);
 is_deeply([$used->_used_modules()], [qw(Net::FTP Module::Used Test::Module::Used)]);
 is_deeply([$used->_used_modules_in_test()], [qw(Test::More Test::Class)]);# SampleModule is ignored
