@@ -103,7 +103,7 @@ sub _test_dir {
     return shift->{test_dir};
 }
 
-sub _module_dir {
+sub _lib_dir {
     return shift->{lib_dir};
 }
 
@@ -274,7 +274,7 @@ sub _module_files {
         find( sub {
                   push @files, catfile($File::Find::dir, $_) if ( $_ =~ /\.pm$/ );
               },
-              @{$self->_module_dir});
+              @{$self->_lib_dir});
         $self->{module_files} = \@files;
     }
     return @{$self->{module_files}};
