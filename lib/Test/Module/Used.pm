@@ -75,7 +75,7 @@ I<exclude_in_libdir> is also automatically set by default. This module reads I<l
 note1: parameter I<module_dir> is deprecated, use I<lib_dir>.
 note2: parameter I<exclude_in_moduledir> is deprecated, use I<exclude_in_libdir>.
 
-deprecated parameters are works currently, but It will be deleted in future release.
+deprecated parameters work currently, but It will be deleted in future release.
 
 =cut
 
