@@ -1,3 +1,10 @@
+2009-12-09  Takuya Tsuchida  <tsucchi@cpan.org>
+
+	* 0.1.2
+	add parameter 'test_lib_dir' in constructor
+	and automatically push exclude_in_testdir to modules which are in
+	test_lib_dir.
+
 2009-12-07  Takuya Tsuchida  <tsucchi@cpan.org>
 
 	* 0.1.1

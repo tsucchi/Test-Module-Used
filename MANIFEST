@@ -30,3 +30,4 @@ testdata/META.yml2
 testdata/META.yml3
 testdata/t/001_test.t
 testdata/t2/001_use_ok.t
+testdata/t2/lib/My/Test2.pm
