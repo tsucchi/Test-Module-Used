@@ -12,7 +12,7 @@ my $used = Test::Module::Used->new(
 );
 
 
-is_deeply([$used->_packages_from_file], ['My::Test']);
+is_deeply([$used->_packages_in($used->_pm_files)], ['My::Test']);
 $used->_get_packages;
 is_deeply($used->{exclude_in_testdir}, ['Test::Module::Used', 'My::Test']);
 is_deeply($used->{exclude_in_libdir}, ['My::Test']);

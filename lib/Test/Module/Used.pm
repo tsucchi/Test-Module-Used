@@ -88,13 +88,13 @@ sub new {
         lib_dir      => $opt{lib_dir}      || $opt{module_dir} || ['lib'],
         meta_file    => $opt{meta_file}    || 'META.yml',
         perl_version => $opt{perl_version} || '5.008',
-        exclude_in_testdir        => $opt{exclude_in_testdir}        || [],
-        exclude_in_libdir         => $opt{exclude_in_libdir}         || $opt{exclude_in_moduledir} || [],
+        exclude_in_testdir        => $opt{exclude_in_testdir},
+        exclude_in_libdir         => $opt{exclude_in_libdir}         || $opt{exclude_in_moduledir},
         exclude_in_build_requires => $opt{exclude_in_build_requires} || [],
         exclude_in_requires       => $opt{exclude_in_requires}       || [],
     };
     bless $self, $class;
-    $self->_get_packages(%opt);
+    $self->_get_packages();
     return $self;
 }
 
@@ -376,28 +376,40 @@ sub _requires {
 # find package statements in lib
 sub _get_packages {
     my $self = shift;
-    my ( %arg ) = @_;
-    my @packages = $self->_packages_from_file;
+    my @packages = $self->_packages_in( $self->_pm_files );
     my @exclude_in_testdir = @packages;
     unshift @exclude_in_testdir, __PACKAGE__;
-    $self->{exclude_in_testdir} = \@exclude_in_testdir if ( !exists $arg{exclude_in_testdir} );
-    $self->{exclude_in_libdir}  = \@packages           if ( !exists $arg{exclude_in_libdir} && !exists $arg{exclude_in_moduledir} );
+    $self->{exclude_in_testdir} = \@exclude_in_testdir if ( !defined $self->{exclude_in_testdir} );
+    $self->{exclude_in_libdir}  = \@packages           if ( !defined $self->{exclude_in_libdir} );
     return @packages;
 }
 
-sub _packages_from_file {
+sub _packages_in {
     my $self = shift;
+    my ( @filenames ) = @_;
+
     my @result;
-    for my $file ( $self->_pm_files ) {
-        my $doc = $self->_ppi_for($file);
-        my $packages = $doc->find('PPI::Statement::Package');
-        next if ( $packages eq '' );
-        for my $item ( @{$packages} ) {
-            for my $token ( @{$item->{children}} ) {
-                next if ( !$token->isa('PPI::Token::Word') );
-                next if ( $token->content eq 'package' );
-                push @result, $token->content;
-            }
+    for my $filename ( @filenames ) {
+        my @packages = $self->_packages_in_file($filename);
+        push @result, @packages;
+    }
+    return @result;
+}
+
+sub _packages_in_file {
+    my $self = shift;
+    my ( $filename ) = @_;
+
+    my $doc = $self->_ppi_for($filename);
+    my $packages = $doc->find('PPI::Statement::Package');
+    return if ( $packages eq '' );
+
+    my @result;
+    for my $item ( @{$packages} ) {
+        for my $token ( @{$item->{children}} ) {
+            next if ( !$token->isa('PPI::Token::Word') );
+            next if ( $token->content eq 'package' );
+            push @result, $token->content;
         }
     }
     return @result;
