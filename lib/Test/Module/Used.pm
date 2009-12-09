@@ -270,11 +270,7 @@ sub _check_used_but_not_required {
 sub _pm_files {
     my $self = shift;
     if ( !defined $self->{pm_files} ) {
-        my @files;
-        find( sub {
-                  push @files, catfile($File::Find::dir, $_) if ( $_ =~ /\.pm$/ );
-              },
-              @{$self->_lib_dir});
+        my @files = $self->_find_files_by_ext($self->_lib_dir, qr/\.pm$/);
         $self->{pm_files} = \@files;
     }
     return @{$self->{pm_files}};
@@ -282,11 +278,17 @@ sub _pm_files {
 
 sub _test_files {
     my $self = shift;
+    return $self->_find_files_by_ext($self->_test_dir, qr/\.t$/);
+}
+
+sub _find_files_by_ext {
+    my $self = shift;
+    my ($start_dirs_aref, $ext_qr) = @_;
     my @result;
     find( sub {
-              push @result, catfile($File::Find::dir, $_) if ( $_ =~ /\.t$/ );
+              push @result, catfile($File::Find::dir, $_) if ( $_ =~ $ext_qr );
           },
-          @{$self->_test_dir});
+          @{$start_dirs_aref});
     return @result;
 }
 
