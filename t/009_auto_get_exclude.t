@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 use warnings;
-use Test::More;
+use Test::More tests => 3;
 use Test::Module::Used;
 use File::Spec::Functions qw(catfile);
 
@@ -11,7 +11,10 @@ my $used = Test::Module::Used->new(
     meta_file => catfile('testdata', 'META.yml3'),
 );
 
-#$used->ok;
-is_deeply([$used->_get_packages], ['My::Test']);
+
+is_deeply([$used->_packages_from_file], ['My::Test']);
+$used->_get_packages;
 is_deeply($used->{exclude_in_testdir}, ['Test::Module::Used', 'My::Test']);
-done_testing();
+is_deeply($used->{exclude_in_libdir}, ['My::Test']);
+
+
