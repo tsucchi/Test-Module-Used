@@ -214,10 +214,10 @@ sub _version {
 sub _num_tests {
     my $self = shift;
 
-    return $self->_remove_core($self->_used_modules) +
-           $self->_remove_core($self->_requires) +
-           $self->_remove_core($self->_used_modules_in_test) +
-           $self->_remove_core($self->_build_requires);
+    return scalar($self->_remove_core($self->_used_modules,
+                                      $self->_requires,
+                                      $self->_used_modules_in_test,
+                                      $self->_build_requires));
 }
 
 sub _requires_ok {
