@@ -1,3 +1,8 @@
+2009-12-22  Takuya Tsuchida  <tsucchi@cpan.org>
+
+	* 0.1.3_01
+	deprecated parameters are deleted
+
 2009-12-09  Takuya Tsuchida  <tsucchi@cpan.org>
 
 	* 0.1.2

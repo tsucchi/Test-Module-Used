@@ -26,7 +26,7 @@ is_deeply( [$used->_remove_core(qw(Module::Used Net::FTP Test::Module::Used))],
 my $used2 = Test::Module::Used->new(
     lib_dir    => [catfile('testdata', 'lib')],
     test_dir   => [catfile('testdata', 't')],
-    exclude_in_moduledir => ['Module::Used'],
+    exclude_in_libdir => ['Module::Used'],
     exclude_in_testdir   => ['Test::Class'],
 );
 is_deeply([$used2->_used_modules()], [qw(Net::FTP Test::Module::Used)]);
@@ -45,7 +45,7 @@ my $used4 = Test::Module::Used->new(
     lib_dir  => [catfile('testdata', 'lib')],
     test_dir => [catfile('testdata', 't')],
 );
-$used4->push_exclude_in_moduledir(qw(Module::Used Net::FTP));
+$used4->push_exclude_in_libdir(qw(Module::Used Net::FTP));
 is_deeply([$used4->_used_modules()], [qw(Test::Module::Used)]);
 $used4->push_exclude_in_testdir( qw(Test::More Test::Class) );
 is_deeply([$used4->_used_modules_in_test()], []);

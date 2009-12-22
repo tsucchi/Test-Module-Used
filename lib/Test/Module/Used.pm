@@ -14,7 +14,7 @@ use Perl::MinimumVersion;
 use PPI::Document;
 
 use 5.008;
-our $VERSION = '0.1.2';
+our $VERSION = '0.1.3_01';
 
 =head1 NAME
 
@@ -73,11 +73,6 @@ if your module source contains I<use 5.XXX> statement, I<perl_version> passed in
 I<exclude_in_testdir> is automatically set by default. This module reads I<lib_dir> and parse "pacakge" statement, then found "package" statements and myself(Test::Module::Used) is set.
 I<exclude_in_libdir> is also automatically set by default. This module reads I<lib_dir> and parse "package" statement, found "package" statement are set.(Test::Module::Used isnt included)
 
-note1: parameter I<module_dir> is deprecated, use I<lib_dir>.
-note2: parameter I<exclude_in_moduledir> is deprecated, use I<exclude_in_libdir>.
-
-deprecated parameters work currently, but It will be deleted in future release.
-
 =cut
 
 
@@ -86,12 +81,12 @@ sub new {
     my (%opt) = @_;
     my $self = {
         test_dir     => $opt{test_dir}     || ['t'],
-        lib_dir      => $opt{lib_dir}      || $opt{module_dir} || ['lib'],
+        lib_dir      => $opt{lib_dir}      || ['lib'],
         test_lib_dir => $opt{test_lib_dir} || ['t'],
         meta_file    => $opt{meta_file}    || 'META.yml',
         perl_version => $opt{perl_version} || '5.008',
         exclude_in_testdir        => $opt{exclude_in_testdir},
-        exclude_in_libdir         => $opt{exclude_in_libdir}         || $opt{exclude_in_moduledir},
+        exclude_in_libdir         => $opt{exclude_in_libdir},
         exclude_in_build_requires => $opt{exclude_in_build_requires} || [],
         exclude_in_requires       => $opt{exclude_in_requires}       || [],
     };
@@ -177,17 +172,6 @@ sub push_exclude_in_libdir {
     push @{$self->{exclude_in_libdir}},@exclude_module_names;
 }
 
-
-=head2 push_exclude_in_moduledir( @exclude_module_names )
-
-deprecated, use push_exclude_in_libdir.
-
-=cut
-
-sub push_exclude_in_moduledir {
-    my $self = shift;
-    $self->push_exclude_in_libdir(@_);
-}
 
 
 =head2 push_exclude_in_testdir( @exclude_module_names )
