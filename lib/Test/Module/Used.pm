@@ -9,9 +9,8 @@ use Module::CoreList;
 use YAML;
 use Test::Builder;
 use List::MoreUtils qw(any);
-use List::Util qw(max);
-use Perl::MinimumVersion;
 use PPI::Document;
+use version;
 
 use 5.008;
 our $VERSION = '0.1.3_01';
@@ -68,10 +67,25 @@ all parameters are as follows.(specified values are default, except I<exclude_in
     exclude_in_requires => [],        # ignored module(s) even if it is written in requires of META.yml.
   );
 
-if your module source contains I<use 5.XXX> statement, I<perl_version> passed in constructor is ignored (prior to use version in module source code).
+if perl_version is not passed in constructor, this modules reads I<meta_file> and get perl version. 
 
 I<exclude_in_testdir> is automatically set by default. This module reads I<lib_dir> and parse "pacakge" statement, then found "package" statements and myself(Test::Module::Used) is set.
 I<exclude_in_libdir> is also automatically set by default. This module reads I<lib_dir> and parse "package" statement, found "package" statement are set.(Test::Module::Used isnt included)
+
+=cut
+
+
+=head1 Important changes
+
+Some behavier is changed since 0.1.3_01.
+
+=over 4
+
+=item perl_version set in constructor is prior to use, and read version from META.yml(not read from use statement in *.pm)
+
+=item deprecated interfaces are deleted. (module_dir, test_module_dir, exclude_in_moduledir and push_exclude_in_moduledir)
+
+=back
 
 =cut
 
@@ -84,7 +98,7 @@ sub new {
         lib_dir      => $opt{lib_dir}      || ['lib'],
         test_lib_dir => $opt{test_lib_dir} || ['t'],
         meta_file    => $opt{meta_file}    || 'META.yml',
-        perl_version => $opt{perl_version} || '5.008',
+        perl_version => $opt{perl_version},
         exclude_in_testdir        => $opt{exclude_in_testdir},
         exclude_in_libdir         => $opt{exclude_in_libdir},
         exclude_in_build_requires => $opt{exclude_in_build_requires} || [],
@@ -196,7 +210,7 @@ sub push_exclude_in_testdir {
 sub _version {
     my $self = shift;
     if ( !defined $self->{version} ) {
-        $self->{version} = $self->_version_from_file || $self->_perl_version;
+        $self->{version} = $self->_perl_version || $self->_version_from_meta || "5.008000";
     }
     return $self->{version};
 }
@@ -322,16 +336,9 @@ sub _array_difference {
     return @a1;
 }
 
-sub _version_from_file {
+sub _version_from_meta {
     my $self = shift;
-
-    my $version = max map {
-        my $minimum_version = Perl::MinimumVersion->new(
-            $self->_ppi_for($_)
-        );
-        $minimum_version->minimum_explicit_version || 0;
-    } $self->_pm_files();
-    return $version;
+    return $self->{version_from_meta};
 }
 
 sub _remove_core {
@@ -352,6 +359,7 @@ sub _read_meta_yml {
     my $self = shift;
     my $yaml = YAML::LoadFile( $self->_meta_file );
     $self->{build_requires} = $yaml->{build_requires};
+    $self->{version_from_meta} = version->parse($yaml->{requires}->{perl})->numify() if defined $yaml->{requires}->{perl};
     delete $yaml->{requires}->{perl};
     $self->{requires} = $yaml->{requires};
 }

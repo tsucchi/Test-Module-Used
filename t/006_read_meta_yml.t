@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 use warnings;
-use Test::More tests=>6;
+use Test::More tests=>8;
 use Test::Module::Used;
 use File::Spec::Functions qw(catfile);
 
@@ -14,6 +14,8 @@ is_deeply( [$used->_build_requires()],
 
 is_deeply( [$used->_requires()],
            ['Module::Used', 'PPI::Document'] );#perl 5.8.0 isn't return
+is($used->_version_from_meta(), "5.008000");
+is($used->_version, "5.008000");
 
 my $used2 = Test::Module::Used->new(
     meta_file => catfile('testdata', 'META.yml2'),
