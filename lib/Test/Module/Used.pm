@@ -13,7 +13,7 @@ use PPI::Document;
 use version;
 
 use 5.008;
-our $VERSION = '0.1.3_01';
+our $VERSION = '0.1.3_02';
 
 =head1 NAME
 
@@ -37,6 +37,19 @@ This module reads I<META.yml> and get I<build_requires> and I<requires>. It comp
 
 =cut
 
+=head1 Important changes
+
+Some behavier is changed since 0.1.3_01.
+
+=over 4
+
+=item * perl_version set in constructor is prior to use, and read version from META.yml(not read from use statement in *.pm)
+
+=item * deprecated interfaces are deleted. (module_dir, test_module_dir, exclude_in_moduledir and push_exclude_in_moduledir)
+
+=back
+
+=cut
 
 =head1 methods
 
@@ -73,22 +86,6 @@ I<exclude_in_testdir> is automatically set by default. This module reads I<lib_d
 I<exclude_in_libdir> is also automatically set by default. This module reads I<lib_dir> and parse "package" statement, found "package" statement are set.(Test::Module::Used isnt included)
 
 =cut
-
-
-=head1 Important changes
-
-Some behavier is changed since 0.1.3_01.
-
-=over 4
-
-=item perl_version set in constructor is prior to use, and read version from META.yml(not read from use statement in *.pm)
-
-=item deprecated interfaces are deleted. (module_dir, test_module_dir, exclude_in_moduledir and push_exclude_in_moduledir)
-
-=back
-
-=cut
-
 
 sub new {
     my $class = shift;

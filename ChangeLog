@@ -1,5 +1,11 @@
 2009-12-24  Takuya Tsuchida  <tsucchi@cpan.org>
 
+	* 0.1.3_02
+	fix: POD structure(chaptering) is insufficient.
+
+
+2009-12-24  Takuya Tsuchida  <tsucchi@cpan.org>
+
 	* 0.1.3_01
 	deprecated parameters are deleted
 	read perl version from META.yml and NOT from *.pm
