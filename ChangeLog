@@ -1,3 +1,8 @@
+2009-12-25  Takuya Tsuchida  <tsucchi@cpan.org>
+
+	* 0.1.4
+	improve error messages when test fails.
+
 2009-12-24  Takuya Tsuchida  <tsucchi@cpan.org>
 
 	* 0.1.3_02

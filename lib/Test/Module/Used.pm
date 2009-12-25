@@ -13,7 +13,7 @@ use PPI::Document;
 use version;
 
 use 5.008;
-our $VERSION = '0.1.3_02';
+our $VERSION = '0.1.4';
 
 =head1 NAME
 
@@ -39,7 +39,7 @@ This module reads I<META.yml> and get I<build_requires> and I<requires>. It comp
 
 =head1 Important changes
 
-Some behavier is changed since 0.1.3_01.
+Some behavier changed since 0.1.3_01.
 
 =over 4
 
@@ -151,10 +151,12 @@ sub ok {
         $test->plan(tests => $num_tests);
         my $status_requires_ok       = $self->_requires_ok($test,
                                                            [$self->_remove_core($self->_used_modules)],
-                                                           [$self->_remove_core($self->_requires)]);
+                                                           [$self->_remove_core($self->_requires)],
+                                                           "lib");
         my $status_build_requires_ok = $self->_requires_ok($test,
                                                            [$self->_remove_core($self->_used_modules_in_test)],
-                                                           [$self->_remove_core($self->_build_requires)]);
+                                                           [$self->_remove_core($self->_build_requires)],
+                                                           "test");
         return $status_requires_ok && $status_build_requires_ok;
     }
     else {
@@ -223,10 +225,10 @@ sub _num_tests {
 
 sub _requires_ok {
     my $self = shift;
-    my ($test, $used_aref, $requires_aref) = @_;
+    my ($test, $used_aref, $requires_aref, $place) = @_;
 
-    my $status1 = $self->_check_required_but_not_used($test, $requires_aref, $used_aref);
-    my $status2 = $self->_check_used_but_not_required($test, $requires_aref, $used_aref);
+    my $status1 = $self->_check_required_but_not_used($test, $requires_aref, $used_aref, $place);
+    my $status2 = $self->_check_used_but_not_required($test, $requires_aref, $used_aref, $place);
 
     return $status1 && $status2;
 }
@@ -234,7 +236,7 @@ sub _requires_ok {
 
 sub _check_required_but_not_used {
     my $self = shift;
-    my ($test, $requires_aref, $used_aref) = @_;
+    my ($test, $requires_aref, $used_aref, $place) = @_;
     my @requires = @{$requires_aref};
     my @used     = @{$used_aref};
 
@@ -243,7 +245,7 @@ sub _check_required_but_not_used {
         my $status = any { $_ eq $require } @used;
         $test->ok( $status, "check required module: $require" );
         if ( !$status ) {
-            $test->diag("module $require is required but not used");
+            $test->diag("module $require is required but not used in $place");
             $result = 0;
         }
     }
@@ -252,7 +254,7 @@ sub _check_required_but_not_used {
 
 sub _check_used_but_not_required {
     my $self = shift;
-    my ($test, $requires_aref, $used_aref) = @_;
+    my ($test, $requires_aref, $used_aref, $place) = @_;
     my @requires = @{$requires_aref};
     my @used     = @{$used_aref};
 
@@ -261,7 +263,7 @@ sub _check_used_but_not_required {
         my $status = any { $_ eq $used } @requires;
         $test->ok( $status, "check used module: $used" );
         if ( !$status ) {
-            $test->diag("module $used is used but not required");
+            $test->diag("module $used is used in $place but not required");
             $result = 0;
         }
     }
