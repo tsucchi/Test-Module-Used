@@ -8,7 +8,7 @@ requires       'YAML';
 requires       'List::MoreUtils';
 requires       'Module::CoreList';
 requires       'PPI::Document';
-requires       'version' => 0.74;
+requires       'version' => 0.77;
 test_requires  'Test::More';
 
 author_tests   'xt';

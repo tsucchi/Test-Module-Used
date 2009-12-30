@@ -13,7 +13,7 @@ use PPI::Document;
 use version;
 
 use 5.008;
-our $VERSION = '0.1.4';
+our $VERSION = '0.1.5';
 
 =head1 NAME
 

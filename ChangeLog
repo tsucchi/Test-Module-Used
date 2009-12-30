@@ -1,3 +1,8 @@
+2009-12-30  Takuya Tsuchida  <tsucchi@cpan.org>
+
+	* 0.1.5
+	fix: insufficient version of version.pm specified.
+
 2009-12-25  Takuya Tsuchida  <tsucchi@cpan.org>
 
 	* 0.1.4
