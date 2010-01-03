@@ -1,5 +1,9 @@
-2010-01-03  Takuya Tsuchida  <tsucchi@cpan.org>
 
+2010-01-03  Takuya Tsuchida  <tsucchi@cpan.org>
+	* 0.1.7
+	add repository in Makefile.PL
+	(merge from git://github.com/cpanservice/Test-Module-Used.git)
+	
 	* 0.1.6
 	fix: add copyright information(for RT#53290)
 

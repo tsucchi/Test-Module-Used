@@ -14,5 +14,5 @@ test_requires  'Test::More';
 author_tests   'xt';
 
 no_index       directory => 'testdata';
-repository 'http://github.com/tsucchi/Test-Module-Used';
+repository     'http://github.com/tsucchi/Test-Module-Used';
 WriteAll;
