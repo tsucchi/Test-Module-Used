@@ -1,3 +1,8 @@
+2010-01-03  Takuya Tsuchida  <tsucchi@cpan.org>
+
+	* 0.1.6
+	fix: add copyright information(for RT#53290)
+
 2009-12-30  Takuya Tsuchida  <tsucchi@cpan.org>
 
 	* 0.1.5

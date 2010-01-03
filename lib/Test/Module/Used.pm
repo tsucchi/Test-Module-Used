@@ -13,7 +13,7 @@ use PPI::Document;
 use version;
 
 use 5.008;
-our $VERSION = '0.1.5';
+our $VERSION = '0.1.6';
 
 =head1 NAME
 
@@ -447,7 +447,9 @@ L<Test::Dependencies> has almost same feature.
 L<http://github.com/tsucchi/Test-Module-Used>
 
 
-=head1 LICENSE
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (c) 2008-2009 Takuya Tsuchida
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
