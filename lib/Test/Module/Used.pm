@@ -13,7 +13,7 @@ use PPI::Document;
 use version;
 
 use 5.008;
-our $VERSION = '0.1.7';
+our $VERSION = '0.1.8';
 
 =head1 NAME
 
@@ -449,7 +449,7 @@ L<http://github.com/tsucchi/Test-Module-Used>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2008-2009 Takuya Tsuchida
+Copyright (c) 2008-2010 Takuya Tsuchida
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

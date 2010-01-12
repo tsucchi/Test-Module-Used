@@ -1,3 +1,7 @@
+2010-01-12  Takuya Tsuchida  <tsucchi@cpan.org>
+
+	* 0.1.8
+	remove executable permission in Makefile.PL
 
 2010-01-03  Takuya Tsuchida  <tsucchi@cpan.org>
 	* 0.1.7
