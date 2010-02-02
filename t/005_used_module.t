@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 use warnings;
-use Test::More tests=>10;
+use Test::More tests=>12;
 use File::Spec::Functions qw(catfile);
 use Test::Module::Used;
 
@@ -40,3 +40,13 @@ $used3->push_exclude_in_libdir(qw(Module::Used Net::FTP));
 is_deeply([$used3->_used_modules()], [qw(Test::Module::Used)]);
 $used3->push_exclude_in_testdir( qw(Test::More Test::Class) );
 is_deeply([$used3->_used_modules_in_test()], []);
+
+# contains modules in test_dir (RT#54187)
+my $used4 = Test::Module::Used->new(
+    test_dir  => [catfile('testdata', 't2')],
+    test_lib_dir => [catfile('testdata', 't2', 'lib')],
+    lib_dir   => [catfile('testdata', 'lib2')],
+    meta_file => catfile('testdata', 'META.yml3'),
+);
+is_deeply([$used4->_test_files],   [catfile('testdata', 't2', '001_use_ok.t'), catfile('testdata', 't2', 'lib', 'My', 'Test2.pm')]);
+is_deeply([$used4->_remove_core($used4->_used_modules_in_test())], [qw(List::MoreUtils)]);

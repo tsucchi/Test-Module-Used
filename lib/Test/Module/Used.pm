@@ -13,7 +13,7 @@ use PPI::Document;
 use version;
 
 use 5.008;
-our $VERSION = '0.1.8';
+our $VERSION = '0.1.9';
 
 =head1 NAME
 
@@ -290,7 +290,10 @@ sub _pm_files_in_test {
 
 sub _test_files {
     my $self = shift;
-    return $self->_find_files_by_ext($self->_test_dir, qr/\.t$/);
+    return (
+        $self->_find_files_by_ext($self->_test_dir, qr/\.t$/),
+        $self->_pm_files_in_test()
+    );
 }
 
 sub _find_files_by_ext {
