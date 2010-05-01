@@ -1,6 +1,5 @@
 ^Makefile$
 ^MANIFEST.SKIP$
-^xt/
 .*~$
 .svn
 ^.git

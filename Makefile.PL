@@ -11,7 +11,11 @@ requires       'PPI::Document';
 requires       'version' => 0.77;
 test_requires  'Test::More';
 
-author_tests   'xt';
+author_tests    'xt';
+author_requires 'Test::Perl::Critic';
+author_requires 'Test::Synopsis';
+author_requires 'Test::Pod';
+author_requires 'Test::Pod::Coverage';
 
 no_index       directory => 'testdata';
 repository     'http://github.com/tsucchi/Test-Module-Used';
