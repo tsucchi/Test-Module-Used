@@ -12,6 +12,7 @@ requires       'version' => 0.77;
 test_requires  'Test::More';
 
 author_tests    'xt';
+
 author_requires 'Test::Perl::Critic';
 author_requires 'Test::Synopsis';
 author_requires 'Test::Pod';
