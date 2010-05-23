@@ -1,3 +1,7 @@
+0.2.0
+    - add AuthorRequires
+    - uniquify module lists
+
 0.1.9
     - fix: modules used in test_lib_dir are ignored.(RT#54187)
     - ChangeLog format change(Because ShipIt doesn't support previous format)

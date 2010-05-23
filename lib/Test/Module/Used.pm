@@ -8,12 +8,12 @@ use Module::Used qw(modules_used_in_document);
 use Module::CoreList;
 use YAML;
 use Test::Builder;
-use List::MoreUtils qw(any);
+use List::MoreUtils qw(any uniq);
 use PPI::Document;
 use version;
 
 use 5.008;
-our $VERSION = '0.1.9';
+our $VERSION = '0.2.0';
 
 =head1 NAME
 
@@ -311,7 +311,7 @@ sub _used_modules {
     my $self = shift;
     if ( !defined $self->{used_modules} ) {
         my @used = map { modules_used_in_document($self->_ppi_for($_)) } $self->_pm_files;
-        my @result = _array_difference(\@used, $self->{exclude_in_libdir});
+        my @result = uniq _array_difference(\@used, $self->{exclude_in_libdir});
         $self->{used_modules} = \@result;
     }
     return @{$self->{used_modules}};
@@ -321,7 +321,7 @@ sub _used_modules_in_test {
     my $self = shift;
     if ( !defined $self->{used_modules_in_test} ) {
         my @used = map { modules_used_in_document($self->_ppi_for($_)) } $self->_test_files;
-        my @result = _array_difference(\@used, $self->{exclude_in_testdir});
+        my @result = uniq _array_difference(\@used, $self->{exclude_in_testdir});
         $self->{used_modules_in_test} = \@result;
     }
     return @{$self->{used_modules_in_test}};
