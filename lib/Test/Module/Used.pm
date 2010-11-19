@@ -6,14 +6,14 @@ use File::Find;
 use File::Spec::Functions qw(catfile);
 use Module::Used qw(modules_used_in_document);
 use Module::CoreList;
-use YAML;
+#use YAML;
 use Test::Builder;
 use List::MoreUtils qw(any uniq);
 use PPI::Document;
 use version;
-
+use CPAN::Meta;
 use 5.008;
-our $VERSION = '0.2.0';
+our $VERSION = '0.2.1';
 
 =head1 NAME
 
@@ -357,19 +357,20 @@ sub _is_core_module {
     return defined $first_release && $first_release <= $self->_version;
 }
 
-sub _read_meta_yml {
+sub _read_meta {
     my $self = shift;
-    my $yaml = YAML::LoadFile( $self->_meta_file );
-    $self->{build_requires} = $yaml->{build_requires};
-    $self->{version_from_meta} = version->parse($yaml->{requires}->{perl})->numify() if defined $yaml->{requires}->{perl};
-    delete $yaml->{requires}->{perl};
-    $self->{requires} = $yaml->{requires};
+    my $meta = CPAN::Meta->load_file( $self->_meta_file );
+    $self->{build_requires} = $meta->{prereqs}->{build}->{requires};
+    my $requires = $meta->{prereqs}->{runtime}->{requires};
+    $self->{version_from_meta} = version->parse($requires->{perl})->numify() if defined $requires->{perl};
+    delete $requires->{perl};
+    $self->{requires} = $requires;
 }
 
 sub _build_requires {
     my $self = shift;
 
-    $self->_read_meta_yml if !defined $self->{build_requires};
+    $self->_read_meta if !defined $self->{build_requires};
     my @result = sort keys %{$self->{build_requires}};
     return _array_difference(\@result, $self->{exclude_in_build_requires});
 }
@@ -377,7 +378,7 @@ sub _build_requires {
 sub _requires {
     my $self = shift;
 
-    $self->_read_meta_yml if !defined $self->{requires};
+    $self->_read_meta if !defined $self->{requires};
     my @result = sort keys %{$self->{requires}};
     return _array_difference(\@result, $self->{exclude_in_requires});
 }

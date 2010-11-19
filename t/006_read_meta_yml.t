@@ -8,7 +8,7 @@ use File::Spec::Functions qw(catfile);
 my $used = Test::Module::Used->new(
     meta_file => catfile('testdata', 'META.yml'),
 );
-$used->_read_meta_yml();
+$used->_read_meta();
 is_deeply( [$used->_build_requires()],
            ['ExtUtils::MakeMaker', 'Test::More'] );
 
@@ -20,7 +20,7 @@ is($used->_version, "5.008000");
 my $used2 = Test::Module::Used->new(
     meta_file => catfile('testdata', 'META.yml2'),
 );
-$used2->_read_meta_yml();
+$used2->_read_meta();
 is_deeply( [$used2->_build_requires()],
            ['ExtUtils::MakeMaker', 'Test::Class', 'Test::More' ] );
 
@@ -34,7 +34,7 @@ my $used3 = Test::Module::Used->new(
     exclude_in_build_requires => ['Test::Class'],
     exclude_in_requires       => ['Module::Used'],
 );
-$used3->_read_meta_yml();
+$used3->_read_meta();
 is_deeply( [$used3->_build_requires()],
            ['ExtUtils::MakeMaker', 'Test::More' ] );
 
