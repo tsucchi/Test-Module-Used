@@ -360,8 +360,9 @@ sub _is_core_module {
 sub _read_meta {
     my $self = shift;
     my $meta = CPAN::Meta->load_file( $self->_meta_file );
-    $self->{build_requires} = $meta->{prereqs}->{build}->{requires};
-    my $requires = $meta->{prereqs}->{runtime}->{requires};
+    my $prereqs = $meta->prereqs();
+    $self->{build_requires} = $prereqs->{build}->{requires};
+    my $requires = $prereqs->{runtime}->{requires};
     $self->{version_from_meta} = version->parse($requires->{perl})->numify() if defined $requires->{perl};
     delete $requires->{perl};
     $self->{requires} = $requires;
