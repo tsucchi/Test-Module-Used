@@ -6,14 +6,13 @@ use File::Find;
 use File::Spec::Functions qw(catfile);
 use Module::Used qw(modules_used_in_document);
 use Module::CoreList;
-#use YAML;
 use Test::Builder;
 use List::MoreUtils qw(any uniq);
 use PPI::Document;
 use version;
 use CPAN::Meta;
 use 5.008;
-our $VERSION = '0.2.1';
+our $VERSION = '0.2.1_01';
 
 =head1 NAME
 
@@ -72,7 +71,9 @@ all parameters are as follows.(specified values are default, except I<exclude_in
     test_dir     => ['t'],            # directory(ies) which contains test scripts.
     lib_dir      => ['lib'],          # directory(ies) which contains module libs.
     test_lib_dir => ['t'],            # directory(ies) which contains libs used ONLY in test (ex. MockObject for test)
-    meta_file    => 'META.yml',       # META.yml (contains module requirement information)
+    meta_file    => 'META.json' or
+                    'META.yml' or
+                    'META.yaml',      # META file (YAML or JSON which contains module requirement information)
     perl_version => '5.008',          # expected perl version which is used for ignore core-modules in testing
     exclude_in_testdir => [],         # ignored module(s) for test even if it is used.
     exclude_in_libdir   => [],        # ignored module(s) for your lib even if it is used.
@@ -94,7 +95,7 @@ sub new {
         test_dir     => $opt{test_dir}     || ['t'],
         lib_dir      => $opt{lib_dir}      || ['lib'],
         test_lib_dir => $opt{test_lib_dir} || ['t'],
-        meta_file    => $opt{meta_file}    || 'META.yml',
+        meta_file    => _find_meta_file($opt{meta_file}),
         perl_version => $opt{perl_version},
         exclude_in_testdir        => $opt{exclude_in_testdir},
         exclude_in_libdir         => $opt{exclude_in_libdir},
@@ -104,6 +105,15 @@ sub new {
     bless $self, $class;
     $self->_get_packages();
     return $self;
+}
+
+sub _find_meta_file {
+    my ($opt_meta_file) = @_;
+    return $opt_meta_file  if ( defined $opt_meta_file );
+    for my $file ( qw(META.json META.yml META.yaml) ) {
+        return $file if ( -e $file );
+    }
+    croak "META file not found\n";
 }
 
 

@@ -24,8 +24,10 @@ t/007_test_myself.t
 t/008_test_is_empty.t
 t/009_auto_get_exclude.t
 t/010_test_myself2.t
+t/011_read_meta_json.t
 testdata/lib/SampleModule.pm
 testdata/lib2/My/Test.pm
+testdata/META.json
 testdata/META.yml
 testdata/META.yml2
 testdata/META.yml3

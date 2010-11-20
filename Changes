@@ -1,3 +1,5 @@
+0.2.1_01
+	- META.json support
 0.2.0
     - add AuthorRequires
     - uniquify module lists
