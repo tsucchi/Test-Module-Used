@@ -1,3 +1,6 @@
+0.2.1_02
+	- fix: forget to use Carp
+
 0.2.1_01
 	- META.json support
 0.2.0

@@ -11,8 +11,9 @@ use List::MoreUtils qw(any uniq);
 use PPI::Document;
 use version;
 use CPAN::Meta;
+use Carp;
 use 5.008;
-our $VERSION = '0.2.1_01';
+our $VERSION = '0.2.1_02';
 
 =head1 NAME
 
