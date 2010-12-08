@@ -13,7 +13,7 @@ use version;
 use CPAN::Meta;
 use Carp;
 use 5.008;
-our $VERSION = '0.2.1_02';
+our $VERSION = '0.2.1_03';
 
 =head1 NAME
 
@@ -160,15 +160,11 @@ sub ok {
     my $num_tests = $self->_num_tests();
     if ( $num_tests > 0 ) {
         $test->plan(tests => $num_tests);
-        my $status_requires_ok       = $self->_requires_ok($test,
-                                                           [$self->_remove_core($self->_used_modules)],
-                                                           [$self->_remove_core($self->_requires)],
-                                                           "lib");
-        my $status_build_requires_ok = $self->_requires_ok($test,
-                                                           [$self->_remove_core($self->_used_modules_in_test)],
-                                                           [$self->_remove_core($self->_build_requires)],
-                                                           "test");
-        return $status_requires_ok && $status_build_requires_ok;
+
+        my $status_requires = $self->_requires_ok($test);
+        my $status_used     = $self->_used_ok($test);
+
+        return $status_requires && $status_used;
     }
     else {
         $test->plan(tests => 1);
@@ -176,6 +172,35 @@ sub ok {
         return 1;
     }
 }
+
+sub _requires_ok {
+    my $self = shift;
+    my ($test) = @_;
+    my $status_lib  = $self->_check_required_but_not_used($test,
+                                                          [$self->_remove_core($self->_used_modules)],
+                                                          [$self->_remove_core($self->_requires)],
+                                                          "lib");
+    my $status_test = $self->_check_required_but_not_used($test,
+                                                          [$self->_remove_core($self->_used_modules_in_test)],
+                                                          [$self->_remove_core($self->_build_requires)],
+                                                          "test");
+    return $status_lib && $status_test;
+}
+
+sub _used_ok {
+    my $self = shift;
+    my ($test) = @_;
+    my $status_lib  = $self->_check_used_but_not_required($test,
+                                                          [$self->_remove_core($self->_used_modules)],
+                                                          [$self->_remove_core($self->_requires)],
+                                                          "lib");
+    my $status_test = $self->_check_used_but_not_required($test,
+                                                          [$self->_remove_core($self->_used_modules_in_test)],
+                                                          [$self->_remove_core($self->_build_requires)],
+                                                          "test");
+    return $status_lib && $status_test;
+}
+
 
 =head2 push_exclude_in_libdir( @exclude_module_names )
 
@@ -232,16 +257,6 @@ sub _num_tests {
                                       $self->_requires,
                                       $self->_used_modules_in_test,
                                       $self->_build_requires));
-}
-
-sub _requires_ok {
-    my $self = shift;
-    my ($test, $used_aref, $requires_aref, $place) = @_;
-
-    my $status1 = $self->_check_required_but_not_used($test, $requires_aref, $used_aref, $place);
-    my $status2 = $self->_check_used_but_not_required($test, $requires_aref, $used_aref, $place);
-
-    return $status1 && $status2;
 }
 
 
@@ -419,20 +434,39 @@ sub _packages_in {
 sub _packages_in_file {
     my $self = shift;
     my ( $filename ) = @_;
+    my @ppi_package_statements = $self->_ppi_package_statements($filename);
+    my @result;
+    for my $ppi_package_statement ( @ppi_package_statements ) {
+        push @result, $self->_package_names_in($ppi_package_statement);
+    }
+    return @result;
+}
+
+sub _ppi_package_statements {
+    my $self = shift;
+    my ($filename) = @_;
 
     my $doc = $self->_ppi_for($filename);
     my $packages = $doc->find('PPI::Statement::Package');
     return if ( $packages eq '' );
+    return @{ $packages };
+}
 
+sub _package_names_in {
+    my $self = shift;
+    my ($ppi_package_statement) = @_;
     my @result;
-    for my $item ( @{$packages} ) {
-        for my $token ( @{$item->{children}} ) {
-            next if ( !$token->isa('PPI::Token::Word') );
-            next if ( $token->content eq 'package' );
-            push @result, $token->content;
-        }
+    for my $token ( @{$ppi_package_statement->{children}} ) {
+        next if ( !$self->_is_package_name($token) );
+        push @result, $token->content;
     }
     return @result;
+}
+
+sub _is_package_name {
+    my $self = shift;
+    my ($ppi_token) = @_;
+    return $ppi_token->isa('PPI::Token::Word') && $ppi_token->content ne 'package';
 }
 
 # PPI::Document object for $filename
