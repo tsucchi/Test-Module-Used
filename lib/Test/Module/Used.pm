@@ -7,7 +7,7 @@ use File::Spec::Functions qw(catfile);
 use Module::Used qw(modules_used_in_document);
 use Module::CoreList;
 use Test::Builder;
-use List::MoreUtils qw(any uniq);
+use List::MoreUtils qw(any uniq all);
 use PPI::Document;
 use version;
 use CPAN::Meta;
@@ -138,9 +138,9 @@ sub _perl_version {
     return shift->{perl_version};
 }
 
-=head2 ok
+=head2 ok()
 
-check used module is ok.
+check used modules are required in META file and required modules in META files are used.
 
   my $used = Test::Module::Used->new(
     exclude_in_testdir => ['Test::Module::Used', 'My::Module'],
@@ -150,41 +150,58 @@ check used module is ok.
 
 First, This module reads I<META.yml> and get I<build_requires> and I<requires>. Next, reads module directory (by default I<lib>) and test directory(by default I<t>), and compare required module is really used and used module is really required. If all these requirement information is OK, test will success.
 
+It is NOT allowed to call ok() and used_ok() in same test file.
+
 =cut
 
 sub ok {
     my $self = shift;
+    return $self->_ok(\&_num_tests, \&_used_ok, \&_requires_ok);
+}
+
+=head2 used_ok()
+
+Only check used modules are required in META file.
+
+  my $used = Test::Module::Used->new();
+  $used->used_ok;
+
+
+Test will success if unused I<requires> or I<build_requires> are defined.
+
+It is NOT allowed to call ok() and used_ok() in same test file.
+
+=cut
+
+sub used_ok {
+    my $self = shift;
+    return $self->_ok(\&_num_tests_used_ok, \&_used_ok);
+}
+
+sub _ok {
+    my $self = shift;
+    my ($num_tests_subref, @ok_subrefs) = @_;
     my $test = Test::Builder->new();
 
+    croak('already tested. calling both ok() and used_ok() is not allowed') if ( !!$self->{tested} );
 
-    my $num_tests = $self->_num_tests();
+    my $num_tests = $num_tests_subref->($self);
+    my $test_status;
     if ( $num_tests > 0 ) {
         $test->plan(tests => $num_tests);
-
-        my $status_requires = $self->_requires_ok($test);
-        my $status_used     = $self->_used_ok($test);
-
-        return $status_requires && $status_used;
+        my @status;
+        for my $ok_subref ( @ok_subrefs ) {
+            push(@status, $ok_subref->($self, $test));
+        }
+        $test_status =  all { $_ } @status;
     }
     else {
         $test->plan(tests => 1);
         $test->ok(1, "no tests run");
-        return 1;
+        $test_status = 1;
     }
-}
-
-sub _requires_ok {
-    my $self = shift;
-    my ($test) = @_;
-    my $status_lib  = $self->_check_required_but_not_used($test,
-                                                          [$self->_remove_core($self->_used_modules)],
-                                                          [$self->_remove_core($self->_requires)],
-                                                          "lib");
-    my $status_test = $self->_check_required_but_not_used($test,
-                                                          [$self->_remove_core($self->_used_modules_in_test)],
-                                                          [$self->_remove_core($self->_build_requires)],
-                                                          "test");
-    return $status_lib && $status_test;
+    $self->{tested} = 1;
+    return !!$test_status;
 }
 
 sub _used_ok {
@@ -195,6 +212,20 @@ sub _used_ok {
                                                           [$self->_remove_core($self->_requires)],
                                                           "lib");
     my $status_test = $self->_check_used_but_not_required($test,
+                                                          [$self->_remove_core($self->_used_modules_in_test)],
+                                                          [$self->_remove_core($self->_build_requires)],
+                                                          "test");
+    return $status_lib && $status_test;
+}
+
+sub _requires_ok {
+    my $self = shift;
+    my ($test) = @_;
+    my $status_lib  = $self->_check_required_but_not_used($test,
+                                                          [$self->_remove_core($self->_used_modules)],
+                                                          [$self->_remove_core($self->_requires)],
+                                                          "lib");
+    my $status_test = $self->_check_required_but_not_used($test,
                                                           [$self->_remove_core($self->_used_modules_in_test)],
                                                           [$self->_remove_core($self->_build_requires)],
                                                           "test");
@@ -252,26 +283,34 @@ sub _version {
 
 sub _num_tests {
     my $self = shift;
-
-    return scalar($self->_remove_core($self->_used_modules,
-                                      $self->_requires,
-                                      $self->_used_modules_in_test,
-                                      $self->_build_requires));
+    return $self->_num_tests_used_ok() + $self->_num_tests_requires_ok();
 }
 
+sub _num_tests_used_ok {
+    my $self = shift;
+    return scalar($self->_remove_core($self->_used_modules,
+                                      $self->_used_modules_in_test));
+}
+
+sub _num_tests_requires_ok {
+    my $self = shift;
+    return scalar($self->_remove_core($self->_requires,
+                                      $self->_build_requires));
+
+}
 
 sub _check_required_but_not_used {
     my $self = shift;
-    my ($test, $requires_aref, $used_aref, $place) = @_;
+    my ($test, $used_aref, $requires_aref, $place) = @_;
     my @requires = @{$requires_aref};
     my @used     = @{$used_aref};
 
     my $result = 1;
-    for my $require ( @requires ) {
-        my $status = any { $_ eq $require } @used;
-        $test->ok( $status, "check required module: $require" );
+    for my $requires ( @requires ) {
+        my $status = any { $_ eq $requires } @used;
+        $test->ok( $status, "check required module: $requires" );
         if ( !$status ) {
-            $test->diag("module $require is required but not used in $place");
+            $test->diag("module $requires is required in META file but not used in $place");
             $result = 0;
         }
     }
@@ -280,7 +319,7 @@ sub _check_required_but_not_used {
 
 sub _check_used_but_not_required {
     my $self = shift;
-    my ($test, $requires_aref, $used_aref, $place) = @_;
+    my ($test, $used_aref, $requires_aref, $place) = @_;
     my @requires = @{$requires_aref};
     my @used     = @{$used_aref};
 
