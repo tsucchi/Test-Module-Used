@@ -1,5 +1,5 @@
 0.2.1_03
-	- implement used_ok()
+	- implement used_ok() and requires_ok()
 
 0.2.1_02
 	- fix: forget to use Carp

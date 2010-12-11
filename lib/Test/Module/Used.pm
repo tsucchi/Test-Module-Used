@@ -150,7 +150,7 @@ check used modules are required in META file and required modules in META files 
 
 First, This module reads I<META.yml> and get I<build_requires> and I<requires>. Next, reads module directory (by default I<lib>) and test directory(by default I<t>), and compare required module is really used and used module is really required. If all these requirement information is OK, test will success.
 
-It is NOT allowed to call ok() and used_ok() in same test file.
+It is NOT allowed to call ok(), used_ok() and requires_ok() in same test file.
 
 =cut
 
@@ -162,14 +162,13 @@ sub ok {
 =head2 used_ok()
 
 Only check used modules are required in META file.
+Test will success if unused I<requires> or I<build_requires> are defined.
 
   my $used = Test::Module::Used->new();
   $used->used_ok;
 
 
-Test will success if unused I<requires> or I<build_requires> are defined.
-
-It is NOT allowed to call ok() and used_ok() in same test file.
+It is NOT allowed to call ok(), used_ok() and requires_ok() in same test file.
 
 =cut
 
@@ -178,12 +177,30 @@ sub used_ok {
     return $self->_ok(\&_num_tests_used_ok, \&_used_ok);
 }
 
+=head2 requires_ok()
+
+Only check required modules in META file is used.
+Test will success if used modules are not defined in META file.
+
+  my $used = Test::Module::Used->new();
+  $used->requires_ok;
+
+
+It is NOT allowed to call ok(), used_ok() and requires_ok() in same test file.
+
+=cut
+
+sub requires_ok {
+    my $self = shift;
+    return $self->_ok(\&_num_tests_requires_ok, \&_requires_ok);
+}
+
 sub _ok {
     my $self = shift;
     my ($num_tests_subref, @ok_subrefs) = @_;
     my $test = Test::Builder->new();
 
-    croak('already tested. calling both ok() and used_ok() is not allowed') if ( !!$self->{tested} );
+    croak('Already tested. Calling ok(), used_ok() and requires_ok() in same test file is not allowed') if ( !!$self->{tested} );
 
     my $num_tests = $num_tests_subref->($self);
     my $test_status;
