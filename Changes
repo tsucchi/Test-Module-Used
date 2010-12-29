@@ -1,3 +1,6 @@
+0.2.1_04
+    - add tests
+    - refactorings
 0.2.1_03
 	- implement used_ok() and requires_ok()
 
@@ -14,14 +17,14 @@
     - fix: modules used in test_lib_dir are ignored.(RT#54187)
     - ChangeLog format change(Because ShipIt doesn't support previous format)
 
-0.1.8 
+0.1.8
 	- remove executable permission in Makefile.PL
 
 
 0.1.7
 	- add repository in Makefile.PL
 	(merge from git://github.com/cpanservice/Test-Module-Used.git)
-	
+
 0.1.6
 	- fix: add copyright information(for RT#53290)
 
@@ -73,7 +76,7 @@
 0.0.4
     - found bug in ok(module_requires exclude)
       add build_requires and requires exclusion in constructor
-	
+
 0.0.3
     - add ChangeLog and README
     - describe about perl_version

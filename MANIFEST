@@ -27,6 +27,10 @@ t/010_test_myself2.t
 t/011_read_meta_json.t
 t/012_used_ok.t
 t/013_requires_ok.t
+t/014_requires_ok_fail.t
+t/015_used_ok_fail.t
+t/016_ok_fail1.t
+t/017_ok_fail2.t
 testdata/lib/SampleModule.pm
 testdata/lib2/My/Test.pm
 testdata/META.json

@@ -13,7 +13,7 @@ use version;
 use CPAN::Meta;
 use Carp;
 use 5.008;
-our $VERSION = '0.2.1_03';
+our $VERSION = '0.2.1_04';
 
 =head1 NAME
 
@@ -82,7 +82,7 @@ all parameters are as follows.(specified values are default, except I<exclude_in
     exclude_in_requires => [],        # ignored module(s) even if it is written in requires of META.yml.
   );
 
-if perl_version is not passed in constructor, this modules reads I<meta_file> and get perl version. 
+if perl_version is not passed in constructor, this modules reads I<meta_file> and get perl version.
 
 I<exclude_in_testdir> is automatically set by default. This module reads I<lib_dir> and parse "pacakge" statement, then found "package" statements and myself(Test::Module::Used) is set.
 I<exclude_in_libdir> is also automatically set by default. This module reads I<lib_dir> and parse "package" statement, found "package" statement are set.(Test::Module::Used isnt included)
@@ -198,27 +198,45 @@ sub requires_ok {
 sub _ok {
     my $self = shift;
     my ($num_tests_subref, @ok_subrefs) = @_;
-    my $test = Test::Builder->new();
 
     croak('Already tested. Calling ok(), used_ok() and requires_ok() in same test file is not allowed') if ( !!$self->{tested} );
 
     my $num_tests = $num_tests_subref->($self);
-    my $test_status;
-    if ( $num_tests > 0 ) {
-        $test->plan(tests => $num_tests);
-        my @status;
-        for my $ok_subref ( @ok_subrefs ) {
-            push(@status, $ok_subref->($self, $test));
-        }
-        $test_status =  all { $_ } @status;
-    }
-    else {
-        $test->plan(tests => 1);
-        $test->ok(1, "no tests run");
-        $test_status = 1;
-    }
+    return $self->_do_test($num_tests, @ok_subrefs);
+}
+
+sub _do_test {
+    my $self = shift;
+    my ($num_tests, @ok_subrefs) = @_;
+
+    my $test = Test::Builder->new();
+    my $test_status = $num_tests > 0 ? $self->_do_test_normal($num_tests, @ok_subrefs) :
+                                       $self->_do_test_no_tests();
     $self->{tested} = 1;
     return !!$test_status;
+}
+
+sub _do_test_normal {
+    my $self = shift;
+    my ($num_tests, @ok_subrefs) = @_;
+
+    my $test = Test::Builder->new();
+    $test->plan(tests => $num_tests);
+    my @status;
+    for my $ok_subref ( @ok_subrefs ) {
+        push(@status, $ok_subref->($self, $test));
+    }
+    my $test_status =  all { $_ } @status;
+    return !!$test_status;
+}
+
+sub _do_test_no_tests {
+    my $self = shift;
+
+    my $test = Test::Builder->new();
+    $test->plan(tests => 1);
+    $test->ok(1, "no tests run");
+    return 1;
 }
 
 sub _used_ok {

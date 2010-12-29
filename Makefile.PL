@@ -10,6 +10,7 @@ requires       'Module::CoreList';
 requires       'PPI::Document';
 requires       'version' => 0.77;
 test_requires  'Test::More';
+test_requires  'Test::Builder::Tester';
 
 author_tests    'xt';
 
