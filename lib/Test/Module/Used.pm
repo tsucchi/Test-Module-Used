@@ -13,7 +13,7 @@ use version;
 use CPAN::Meta;
 use Carp;
 use 5.008;
-our $VERSION = '0.2.1_04';
+our $VERSION = '0.2.2';
 
 =head1 NAME
 
@@ -573,7 +573,7 @@ L<http://github.com/tsucchi/Test-Module-Used>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2008-2010 Takuya Tsuchida
+Copyright (c) 2008-2011 Takuya Tsuchida
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
