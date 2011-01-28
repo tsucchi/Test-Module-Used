@@ -1,3 +1,12 @@
+blib/arch/.exists
+blib/arch/auto/Test/Module/Used/.exists
+blib/bin/.exists
+blib/lib/auto/Test/Module/Used/.exists
+blib/lib/Test/Module/.exists
+blib/lib/Test/Module/Used.pm
+blib/man1/.exists
+blib/man3/.exists
+blib/script/.exists
 Changes
 inc/Module/Install.pm
 inc/Module/Install/AuthorRequires.pm
@@ -13,6 +22,7 @@ lib/Test/Module/Used.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml
+pm_to_blib
 README
 t/001_use_ok.t
 t/002_default.t
@@ -35,10 +45,10 @@ testdata/lib/SampleModule.pm
 testdata/lib2/My/Test.pm
 testdata/META.json
 testdata/META.yml
-testdata/META.yml2
-testdata/META.yml3
-testdata/META.yml4
-testdata/META.yml5
+testdata/META2.yml
+testdata/META3.yml
+testdata/META4.yml
+testdata/META5.yml
 testdata/t/001_test.t
 testdata/t2/001_use_ok.t
 testdata/t2/lib/My/Test2.pm
