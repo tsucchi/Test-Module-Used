@@ -11,7 +11,7 @@ use Test::More;
 my $used = Test::Module::Used->new(
     test_dir  => [catdir('testdata', 't')],
     lib_dir   => [catdir('testdata', 'lib')],
-    meta_file => catfile('testdata', 'META.yml4'),
+    meta_file => catfile('testdata', 'META4.yml'),
 );
 
 

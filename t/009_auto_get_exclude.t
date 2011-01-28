@@ -8,7 +8,7 @@ use File::Spec::Functions qw(catfile);
 my $used = Test::Module::Used->new(
     test_dir  => [catfile('testdata', 't2')],
     lib_dir   => [catfile('testdata', 'lib2')],
-    meta_file => catfile('testdata', 'META.yml3'),
+    meta_file => catfile('testdata', 'META3.yml'),
 );
 
 
@@ -21,7 +21,7 @@ my $used1 = Test::Module::Used->new(
     test_dir  => [catfile('testdata', 't2')],
     lib_dir   => [catfile('testdata', 'lib2')],
     test_lib_dir => [catfile('testdata', 't2', 'lib')],
-    meta_file => catfile('testdata', 'META.yml3'),
+    meta_file => catfile('testdata', 'META3.yml'),
 );
 
 is_deeply([$used1->_packages_in($used1->_pm_files)], ['My::Test']);

@@ -46,7 +46,7 @@ my $used4 = Test::Module::Used->new(
     test_dir  => [catfile('testdata', 't2')],
     test_lib_dir => [catfile('testdata', 't2', 'lib')],
     lib_dir   => [catfile('testdata', 'lib2')],
-    meta_file => catfile('testdata', 'META.yml3'),
+    meta_file => catfile('testdata', 'META3.yml'),
 );
 is_deeply([$used4->_test_files],   [catfile('testdata', 't2', '001_use_ok.t'), catfile('testdata', 't2', 'lib', 'My', 'Test2.pm')]);
 is_deeply([$used4->_remove_core($used4->_used_modules_in_test())], [qw(List::MoreUtils)]);
