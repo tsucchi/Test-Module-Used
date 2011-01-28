@@ -13,7 +13,7 @@ use version;
 use CPAN::Meta;
 use Carp;
 use 5.008;
-our $VERSION = '0.2.2';
+our $VERSION = '0.2.3';
 
 =head1 NAME
 
