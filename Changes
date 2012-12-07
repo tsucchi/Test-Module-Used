@@ -1,3 +1,6 @@
+0.2.4
+    - fix: RT#81553 Test failures due to hash randomisation in perl 5.17.6 (thanks ANDK)
+
 0.2.3
     - fix: tests are failed when using newer Parse::CPAN::Meta.
 0.2.2
