@@ -1,6 +1,0 @@
-^Makefile$
-^MANIFEST.SKIP$
-.*~$
-.svn
-^.git
-^.shipit$

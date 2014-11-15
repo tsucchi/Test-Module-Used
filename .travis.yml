@@ -1,0 +1,11 @@
+language: perl
+perl:
+  - "5.16"
+  - "5.18"
+  - "5.20"
+before_install:
+  - cpanm -n Devel::Cover::Report::Coveralls
+  - cover -delete 
+script:
+  perl Build.PL && ./Build build && cover -test -report coveralls
+

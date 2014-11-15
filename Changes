@@ -1,3 +1,7 @@
+{{$NEXT}}
+
+    - migrate to Minilla
+
 0.2.4
     - fix: RT#81553 Test failures due to hash randomisation in perl 5.17.6 (thanks ANDK)
 
