@@ -12,8 +12,8 @@ use PPI::Document;
 use version;
 use CPAN::Meta;
 use Carp;
-use 5.008;
-our $VERSION = '0.2.4';
+use 5.008001;
+our $VERSION = '0.2.5';
 
 =head1 NAME
 

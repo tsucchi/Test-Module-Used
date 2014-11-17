@@ -4,7 +4,7 @@
       "Takuya Tsuchida <tsucchi@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v2.2.0, CPAN::Meta::Converter version 2.142690",
+   "generated_by" : "Minilla/v2.1.1, CPAN::Meta::Converter version 2.141170",
    "license" : [
       "perl_5"
    ],
@@ -71,7 +71,7 @@
          "web" : "https://github.com/tsucchi/Test-Module-Used"
       }
    },
-   "version" : "0.2.4",
+   "version" : "0.2.5",
    "x_contributors" : [
       "CPAN Service <cpanservice@chorny.net>"
    ]

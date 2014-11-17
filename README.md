@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/tsucchi/Test-Module-Used.svg?branch=master)](https://travis-ci.org/tsucchi/Test-Module-Used) [![Coverage Status](https://img.shields.io/coveralls/tsucchi/Test-Module-Used/master.svg)](https://coveralls.io/r/tsucchi/Test-Module-Used?branch=master)
+[![Build Status](https://travis-ci.org/tsucchi/Test-Module-Used.png?branch=master)](https://travis-ci.org/tsucchi/Test-Module-Used) [![Coverage Status](https://coveralls.io/repos/tsucchi/Test-Module-Used/badge.png?branch=master)](https://coveralls.io/r/tsucchi/Test-Module-Used?branch=master)
 # NAME
 
 Test::Module::Used - Test required module is really used and vice versa bitween lib/t and META.yml
