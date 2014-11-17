@@ -23,6 +23,6 @@ $used->used_ok();
 
 my $builder = Test::Builder->new();
 $builder->reset;# reset because plan is automatically set in Test::Module::Used.
-plan tests=>1;
 test_test(skip_err=>1);
 
+done_testing;

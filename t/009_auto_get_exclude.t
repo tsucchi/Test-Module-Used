@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 use warnings;
-use Test::More tests => 7;
+use Test::More;
 use Test::Module::Used;
 use File::Spec::Functions qw(catfile);
 
@@ -31,3 +31,4 @@ is_deeply($used1->{exclude_in_testdir}, ['Test::Module::Used', 'My::Test', 'My::
 is_deeply($used1->{exclude_in_libdir}, ['My::Test']);
 
 
+done_testing;

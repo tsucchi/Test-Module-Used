@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 use warnings;
-use Test::More tests=>12;
+use Test::More;
 use File::Spec::Functions qw(catfile);
 use Test::Module::Used;
 
@@ -50,3 +50,5 @@ my $used4 = Test::Module::Used->new(
 );
 is_deeply([$used4->_test_files],   [catfile('testdata', 't2', '001_use_ok.t'), catfile('testdata', 't2', 'lib', 'My', 'Test2.pm')]);
 is_deeply([$used4->_remove_core($used4->_used_modules_in_test())], [qw(List::MoreUtils)]);
+
+done_testing;

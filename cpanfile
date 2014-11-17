@@ -9,5 +9,5 @@ requires 'version', '0.77';
 on build => sub {
     requires 'ExtUtils::MakeMaker', '6.59';
     requires 'Test::Builder::Tester';
-    requires 'Test::More';
+    requires 'Test::More', '0.98';
 };

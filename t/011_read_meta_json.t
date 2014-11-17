@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 use warnings;
-use Test::More tests=>2;
+use Test::More;
 use Test::Module::Used;
 use File::Spec::Functions qw(catfile);
 
@@ -16,3 +16,4 @@ is_deeply( [$used->_requires()],
            ['Module::Used', 'PPI::Document'] );
 
 
+done_testing;

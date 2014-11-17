@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 use warnings;
-use Test::More tests=>8;
+use Test::More;
 use Test::Module::Used;
 use File::Spec::Functions qw(catfile);
 
@@ -42,3 +42,4 @@ is_deeply( [$used3->_requires()],
            ['Test::Module::Used'] );#perl 5.8.0 isn't return
 
 
+done_testing;
