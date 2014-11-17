@@ -128,7 +128,7 @@ Takuya Tsuchida <tsucchi@cpan.org>
 
 # COPYRIGHT AND LICENSE
 
-Copyright (c) 2008-2012 Takuya Tsuchida
+Copyright (c) 2008-2014 Takuya Tsuchida
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
