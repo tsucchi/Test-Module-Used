@@ -15,9 +15,11 @@ use Carp;
 use 5.008001;
 our $VERSION = '0.2.5';
 
+=for stopwords versa
+
 =head1 NAME
 
-Test::Module::Used - Test required module is really used and vice versa bitween lib/t and META.yml
+Test::Module::Used - Test required module is really used and vice versa between lib/t and META.yml
 
 =head1 SYNOPSIS
 
@@ -39,7 +41,7 @@ This module reads I<META.yml> and get I<build_requires> and I<requires>. It comp
 
 =head1 Important changes
 
-Some behavier changed since 0.1.3_01.
+Some behavior changed since 0.1.3_01.
 
 =over 4
 
@@ -84,8 +86,8 @@ all parameters are as follows.(specified values are default, except I<exclude_in
 
 if perl_version is not passed in constructor, this modules reads I<meta_file> and get perl version.
 
-I<exclude_in_testdir> is automatically set by default. This module reads I<lib_dir> and parse "pacakge" statement, then found "package" statements and myself(Test::Module::Used) is set.
-I<exclude_in_libdir> is also automatically set by default. This module reads I<lib_dir> and parse "package" statement, found "package" statement are set.(Test::Module::Used isnt included)
+I<exclude_in_testdir> is automatically set by default. This module reads I<lib_dir> and parse "package" statement, then found "package" statements and myself(Test::Module::Used) is set.
+I<exclude_in_libdir> is also automatically set by default. This module reads I<lib_dir> and parse "package" statement, found "package" statement are set.(Test::Module::Used isn't included)
 
 =cut
 

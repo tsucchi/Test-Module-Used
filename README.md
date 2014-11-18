@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/tsucchi/Test-Module-Used.png?branch=master)](https://travis-ci.org/tsucchi/Test-Module-Used) [![Coverage Status](https://coveralls.io/repos/tsucchi/Test-Module-Used/badge.png?branch=master)](https://coveralls.io/r/tsucchi/Test-Module-Used?branch=master)
 # NAME
 
-Test::Module::Used - Test required module is really used and vice versa bitween lib/t and META.yml
+Test::Module::Used - Test required module is really used and vice versa between lib/t and META.yml
 
 # SYNOPSIS
 
@@ -20,7 +20,7 @@ This module reads _META.yml_ and get _build\_requires_ and _requires_. It compar
 
 # Important changes
 
-Some behavier changed since 0.1.3\_01.
+Some behavior changed since 0.1.3\_01.
 
 - perl\_version set in constructor is prior to use, and read version from META.yml(not read from use statement in \*.pm)
 - deprecated interfaces are deleted. (module\_dir, test\_module\_dir, exclude\_in\_moduledir and push\_exclude\_in\_moduledir)
@@ -56,8 +56,8 @@ all parameters are as follows.(specified values are default, except _exclude\_in
 
 if perl\_version is not passed in constructor, this modules reads _meta\_file_ and get perl version.
 
-_exclude\_in\_testdir_ is automatically set by default. This module reads _lib\_dir_ and parse "pacakge" statement, then found "package" statements and myself(Test::Module::Used) is set.
-_exclude\_in\_libdir_ is also automatically set by default. This module reads _lib\_dir_ and parse "package" statement, found "package" statement are set.(Test::Module::Used isnt included)
+_exclude\_in\_testdir_ is automatically set by default. This module reads _lib\_dir_ and parse "package" statement, then found "package" statements and myself(Test::Module::Used) is set.
+_exclude\_in\_libdir_ is also automatically set by default. This module reads _lib\_dir_ and parse "package" statement, found "package" statement are set.(Test::Module::Used isn't included)
 
 ## ok()
 

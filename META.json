@@ -1,5 +1,5 @@
 {
-   "abstract" : "Test required module is really used and vice versa bitween lib/t and META.yml",
+   "abstract" : "Test required module is really used and vice versa between lib/t and META.yml",
    "author" : [
       "Takuya Tsuchida <tsucchi@cpan.org>"
    ],
@@ -54,7 +54,7 @@
             "Module::CoreList" : "0",
             "Module::Used" : "0",
             "PPI::Document" : "0",
-            "perl" : "5.008",
+            "perl" : "5.008001",
             "version" : "0.77"
          }
       }
