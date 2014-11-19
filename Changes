@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.2.5 2014-11-19T11:28:17Z
+
     - migrate to Minilla
     - fix: RT#100270 for Test-Module-Used: Test::More alphas break this. 
 
