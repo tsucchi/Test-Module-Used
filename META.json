@@ -15,6 +15,7 @@
    "name" : "Test-Module-Used",
    "no_index" : {
       "directory" : [
+         "testdata",
          "t",
          "xt",
          "inc",
