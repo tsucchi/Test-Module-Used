@@ -13,7 +13,7 @@ use version;
 use CPAN::Meta;
 use Carp;
 use 5.008001;
-our $VERSION = '0.2.5';
+our $VERSION = '0.2.6';
 
 =for stopwords versa
 

@@ -2,7 +2,7 @@ package My::Test;
 use strict;
 use warnings;
 
-our $VERSION = "0.2.5";
+our $VERSION = "0.2.6";
 #use 5.008;
 
 =head1 NAME
